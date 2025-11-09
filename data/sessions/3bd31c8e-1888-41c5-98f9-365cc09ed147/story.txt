@@ -1,0 +1,99 @@
+DM: The first light of dawn spills over the spires of Moonspire Academy, painting the Grand Quadrangle in hues of rose and gold. The cobblestones glisten with dew as students—some bleary-eyed, others already brimming with energy—hurry toward the morning lectures. Among them, you, Kava, stand apart not just for your elven grace but for the quiet intensity in your gaze. The weight of centuries lingers in your movements, though your face is smooth with youth by human standards.
+
+A sharp chime rings out from the clocktower, signaling the start of the day. Nearby, a group of younger students whispers about last night’s scandal—a forbidden duel in the library stacks, they say, between a fiery tiefling and a brooding half-orc. Their voices drop as you pass, and one of them, a human girl with ink-stained fingers, glances at you with curiosity. "You’re in the advanced arcana seminar, right?" she asks, tucking a loose strand of hair behind her ear. "Professor Veyla’s been asking about you. Says you’ve got a knack for unraveling old elven scripts."
+
+Before you can respond, a gust of wind carries the scent of parchment and lavender from the open windows of the lecture halls. The girl grins. "If you’re heading to class, you’d better hurry. Veyla locks the doors the second the bell finishes tolling." She darts off, leaving you with the echo of her words—and the unspoken question of why an elf like you, who could have spent centuries mastering magic in the ancient groves, chose this place of mortals and their fleeting ambitions. The quad buzzes with life, but the shadows between the buildings seem to whisper of secrets yet to unfold.
+You do: I head towards the class to linger before it starts
+DM: The scent of aged parchment and crushed herbs grows stronger as you weave through the thinning crowd, your boots barely whispering against the cobblestones. The door to Professor Veyla’s lecture hall stands ajar, its iron hinges groaning faintly in the morning breeze. Inside, the chamber is a vault of knowledge—shelves lined with tomes bound in dragonhide and enchanted silver, their spines etched with runes that flicker like dying embers when glanced at sidelong. A single lantern burns at the front, casting long shadows over the tiered seating, where only a handful of students have claimed their spots.
+
+One of them—a lanky half-elf with a scar running from his temple to his jawline—leans over his desk, sketching something in the margins of his notes. He doesn’t look up as you enter, but his quill pauses mid-stroke. "You’re the one Veyla’s been muttering about," he says, voice dry as old vellum. "The elf who reads dead languages like they’re love letters." His gaze flicks to yours, sharp and assessing. "Word of advice: she tests the latecomers. Locks the door, dims the lights, and asks you to translate a curse tablet from the Third Dynasty. No pressure."
+
+From the front of the room, a stack of papers rustles. Professor Veyla herself—a human woman with silver-streaked hair bound in a tight braid—emerges from behind a towering bookshelf, her robes whispering against the floor. Her eyes, the color of storm clouds, lock onto you. "Ah. Kava," she says, her voice carrying the weight of someone used to being obeyed. "I was beginning to think you’d chosen to audit my class from the comfort of the quadrangle." She taps the face of an hourglass on her desk, its sand nearly spent. "You’ve got the time it takes that to empty to prove you belong here. Show me something *interesting* about that script on the board—or don’t, and spend the semester copying my lecture notes by hand." Her lips twitch, almost a smile, as she gestures to the blackboard, where a passage in flowing, archaic Elvish glows faintly with residual magic.
+
+The half-elf smirks, snapping his notebook shut. "Good luck. That’s not just *old*. It’s *cursed* old." He stands, stretching his arms overhead. "I’m Dain, by the way. Save you the trouble of asking later." With that, he saunters past you, clapping a hand on your shoulder as he goes. "Don’t screw this up. I need someone in here who can actually *read* the assignments."
+
+The hourglass begins its inexorable descent. The script on the board pulses once, as if aware of your gaze. What do you do?
+You do: examine The script
+DM: - **Script Origin & Language**: The passage is written in **High Elvish**, but its dialect and stylistic flourishes mark it as **pre-Exodus**, likely from the **Third Dynasty of the Sylvan Crowns**—an era when elven monarchs bound magic to written word, and scripts were often *alive* with residual enchantments. The curves of the letters are **too precise for human hands**, their strokes tapering like vine tendrils, with **embedded runes** that flicker faintly when viewed peripherally.
+
+- **Physical Traits of the Script**:
+  - **Ink**: A deep, **iridescent violet-black**, shimmering like oil on water, with **micro-fractures** in the strokes—signs of age or deliberate *breaking* of the original spellwork.
+  - **Surface**: The board beneath it is **enchanted slate**, humming softly when touched; the script is **etched into the surface**, not merely written, suggesting it was *burned* into the stone by a spell or a **true-name invocation**.
+  - **Animation**: The runes **pulse weakly**, as if breathing—**one in seven** flickers out of sync, a sign of corruption or incomplete casting. The word for *"crown"* repeats in a **hidden pattern**, forming a sigil at the script’s center.
+
+- **Ambient Clues**:
+  - **Scent**: A **dry, metallic tang**, like old blood mixed with crushed **moonpetal** (a flower used in elven memory-rites), clings to the air near the board.
+  - **Sound**: A **low, resonant hum** emanates from the slate when leaned close, vibrating in your bones—**not unlike the tone of a dying ley-line**.
+  - **Contextual Marks**: Faint **chalk notes** in Professor Veyla’s handwriting frame the script, labeling sections with terms like *"obligation glyph"* and *"the Sundered Oath"*—hints this is a **fragment of a binding contract**, possibly tied to a **monarch’s succession**.
+
+- **Dangers/Opportunities**:
+  - The **out-of-sync rune** looks **deliberately altered**—perhaps a student’s failed translation attempt or a **ward** to prevent full activation.
+  - The sigil at the center **resembles a crown missing its jewel**—a classic elven metaphor for a **broken lineage** or a **usurped throne**.
+  - If this is a **live contract**, reading it aloud could **trigger its magic**—or its **curse**. The fact that Veyla uses it as a test suggests she either **trusts her wards** or **wants to see what happens**.
+You: "You know, some would be think with such lifespans, humans would be more careful with their lives. "
+DM: The corner of your mouth quirks as you trace a finger along the edge of the enchanted slate, feeling the faint vibration of the script beneath your touch. The words carry the weight of centuries, but the humans in this room—Veyla, Dain, the others—treat them like kindling for their ambition.
+
+Professor Veyla’s storm-gray eyes narrow slightly, her braid shifting as she tilts her head. **"Careful?"** she echoes, her voice low but carrying the sharpness of a honed blade. **"No, Kava. They *burn*. Because they know the flame won’t last."** She steps closer, the scent of crushed lavender and old parchment clinging to her robes. **"You elves hoard time like dragons hoard gold. But tell me—what’s the use of eternity if you spend it afraid to leave a mark?"** Her gaze flicks to the script, then back to you. **"That passage isn’t just a test. It’s a *warning*. The Third Dynasty didn’t fall because they were weak. They fell because they thought their crowns—and their words—were *permanent*."**
+
+Dain snorts from his seat, where he’s been pretending not to listen. **"Humans write their names in fire and hope the smoke tells a story,"** he says, tapping his scarred temple. **"Elves carve theirs into mountains and act surprised when the wind erodes them."** He leans forward, elbows on his knees. **"So. You gonna read that thing, or are we all gonna sit here pretending you don’t know what it says?"**
+
+The hourglass is nearly empty. The out-of-sync rune pulses again, slower this time, like a heartbeat fading. The script *wants* to be read. But the question isn’t just about translation—it’s about what happens when you breathe life into words that were meant to die with their makers.
+You do: "It says "crown"."I take care not to pronounce it in elvish. 
+DM: The moment the word *"crown"* leaves your lips—deliberately flattened into the Common tongue—the script on the board **reacts**. The violet-black ink **ripples**, as if disturbed by an unseen current, and the out-of-sync rune **flares bright white** before snuffing out entirely. A collective breath is drawn from the handful of students still in the room—some leaning forward, others recoiling.
+
+Professor Veyla’s expression doesn’t change, but her fingers **tighten imperceptibly** around the edge of her desk. **"Clever,"** she murmurs. **"You didn’t speak it, but you *named* it. That’s the first rule of Third Dynasty contracts: the crown is never just a crown."** She steps aside, revealing the blackboard fully. **"That’s the Oath of the Sundered King—Orion the Last, who tried to bind his lineage to the ley-lines themselves. His crown wasn’t gold. It was a *promise*."** Her voice drops. **"One he broke."**
+
+Dain lets out a low whistle, his scar pulling taut as he grins. **"So it’s a *curse*, then. Nice. You just volunteered to be the demo."** He jerks his chin toward the board, where the script is now **rewriting itself**, the letters slithering like serpents to form a new phrase: **"Speak the breaking, or bear the weight."**
+
+The hourglass runs out. The door **slams shut** behind you, the lock clicking into place with finality. The lanterns dim, casting the room in a **watery, blue-tinged twilight**. Veyla’s voice cuts through the silence, sharp as a blade: **"Now you’ve got a choice, Kava. That oath was never fulfilled. The crown’s magic is still *hungry*."** She gestures to the board. **"Either translate the *rest* of it—and risk waking whatever’s left of Orion’s will—or walk away and let the contract *choose* its own heir."** Her eyes gleam. **"I’d recommend the former. The latter tends to involve *blood*."**
+
+The script pulses again. Waiting. **Demanding**. The air hums with the scent of **ozone and old iron**, the taste of a storm about to break. What do you do?
+You do: I speak it fully
+DM: The moment you **speak the oath in full**, the script **ignites**.
+
+The violet-black ink **tears free** from the slate, coalescing into a **spectral crown** of jagged, half-formed promises. The air **cracks** with the scent of lightning and **burnt rose petals**—the scent of elven kingship, of vows carved into bone. Your voice carries the weight of the words, and the crown **lurches** toward you—
+
+—before **shattering** against an unseen barrier just inches from your chest.
+
+The fragments **scatter**, dissolving into **embers** that spiral around the room. Each ember **whispers** a name—**Orion’s heirs, his betrayers, the line of succession**—before fading into the blue-tinged gloom. The last one lingers, hovering before you like a dying firefly. It pulses once, twice, then **speaks** in a voice like wind through ruins:
+
+**"You are marked."**
+
+Silence.
+
+Then—**applause**.
+
+Professor Veyla claps **slowly**, her expression unreadable. **"Well,"** she says, **"that was *interesting*."** She steps forward, her boot crushing a lingering ember. **"You just did what three senior scholars couldn’t: you **activated** the oath without being **consumed** by it."** Her eyes gleam. **"Either you’re very lucky, Kava… or you’re **lying** about who you are."**
+
+Dain is on his feet, his smirk gone, replaced by something **sharper**. **"You’re not just some elf,"** he says, voice low. **"That crown *recognized* you."**
+
+The door **unlocks** with a heavy *click*. The lanterns flare back to life, revealing the faces of your classmates—some **awed**, others **fearful**, a few **calculating**. Veyla exhales, then straightens her robes. **"Class dismissed. Kava, you’re with me."** She doesn’t wait for a response before turning toward her office, her braid swinging like a pendulum. **"And Dain?"** she calls over her shoulder. **"Find the *Libram of Unclaimed Lineages* in the restricted archives. If our friend here is marked, we’d best know **why**."**
+
+The hallway outside is **too bright**, the air **too still**. The weight of the oath’s words lingers on your tongue, **metallic and sweet**, like the aftertaste of a poisoned promise.
+
+What do you do?
+DM: The hallway’s polished marble floor reflects the flickering torchlight as you follow Professor Veyla toward her office, the weight of the oath’s mark still **tingling** along your skin like a half-healed scar. The other students scatter like leaves in a storm, their whispers trailing after you—*"marked," "crown," "who *is* he?"*—but Veyla moves with the purpose of a general marching toward battle. Her office door looms ahead, its surface carved with **warding sigils** that hum faintly as you approach, as if sensing the new magic clinging to you.
+
+Inside, the air is thick with the scent of **aged parchment and crushed sage**, the walls lined with shelves of **leather-bound tomes** and **glass jars** filled with floating embers—each one a fragment of a broken oath, you realize, recognizing the same violet-black hue as the script. Veyla doesn’t bother to sit. Instead, she pours two glasses of **amber liquid** from a decanter labeled *"For Emergencies"* and slides one toward you. **"Drink. It’ll settle the magic in your veins before it starts *talking* back."**
+
+She takes a sip of her own, her storm-gray eyes never leaving yours. **"You’re not just any elf,"** she says, voice low. **"That oath shouldn’t have recognized you. Not unless you’re tied to the Third Dynasty by **blood** or by **debt**."** She sets the glass down with a sharp *clink*. **"So. Which is it?"**
+
+Before you can answer, a **rapid knock** echoes at the door. Dain doesn’t wait for an invitation before striding in, a **leather-bound tome** tucked under his arm. His usual smirk is gone, replaced by something **focused, almost hungry**. **"Found it,"** he says, tossing the *Libram of Unclaimed Lineages* onto the desk. The book lands with a *thud*, its cover **pulsing faintly** with the same rhythm as the mark on your skin. **"Page 47,"** he continues, flipping it open. **"The ‘Crownless Heirs’ section. There’s a list of names—nobles, scholars, a few rogues—who’ve been marked by broken oaths over the centuries."** His finger traces down the page before stopping at a **blank space** near the bottom. **"Funny thing, though. There’s a fresh spot here. Like the ink just… *vanished*."** He looks up, his gaze locking onto yours. **"Almost like it’s waiting for a new name."**
+You: "Well the third dynasty was a bit before my time you know. We haven't needed a monarch in all this time so what's the big deal anyways?"
+DM: Veyla’s lips twitch—not quite a smile, but the ghost of one. **"Before your time?"** she echoes, tapping a finger against the *Libram*. **"Elves measure time like humans measure breath. But even *you* must know the Third Dynasty didn’t just *fade*."** She leans forward, the torchlight carving shadows into the angles of her face. **"Orion’s line didn’t end. It *shattered*. And every time someone with his blood—or his *debt*—speaks that oath, the crown tries to **reforge itself**."** Her voice drops. **"Usually, it takes them instead."**
+
+Dain snorts, flipping through the *Libram* with deliberate roughness. **"Yeah, and usually, those ‘chosen’ end up as **stains** on the archive floor."** He stops on a page where a **sketch of a skeletal figure** wears a crown of **blackened veins**. **"See this? That’s Lord Veythas. Last guy who tried to ‘ignore’ the marking. Took three days to turn into *that*."** He slams the book shut. **"So. You’re either the first elf in centuries who doesn’t know his own bloodline, or you’re the **worst liar** I’ve ever met."**
+
+Veyla’s gaze doesn’t waver. **"Or,"** she says slowly, **"you’re something else entirely."** She reaches into her desk and slides a **small, silver mirror** across the table. Its surface is **fogged**, but the condensation swirls unnaturally, forming **elvish script** along the edges. **"Look."**
+
+The moment your fingers brush the mirror, the fog **clears**—revealing not your reflection, but a **silhouette of a crown** hovering over your shoulder, its points **dripping shadow**. The mark on your skin **burns** in response, and the script in the mirror **rewrites itself**:
+
+**"The crown remembers what you do not."**
+
+Outside, the academy’s **bell tower chimes**—once, twice—a signal. Veyla stiffens. **"That’s the wards. Someone’s **crossed** the restricted archives’ threshold without clearance."** She grabs her coat, her voice sharp. **"Dain, get him to the **Sanctum of Unclaimed Heirs**. Now. If the marking’s fresh, the crown’s **hunger** will draw attention."** She doesn’t wait for an answer before striding out, her boots clicking like a metronome counting down to disaster.
+
+Dain shoves the *Libram* into your arms. **"Move,"** he growls, already heading for the door. **"Unless you’d rather explain to the **Dean of Oaths** why you’re glowing like a cursed relic."**
+
+The hallway is **emptier** now, the torches flickering as if a **cold wind** just passed through. The mark on your skin **throbs**, syncing with the **distant sound of chanting**—low, rhythmic, and **coming closer**.
+
+What do you do?

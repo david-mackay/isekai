@@ -1,0 +1,202 @@
+{
+  "cards": [
+    {
+      "id": "6919649c-9473-4b27-bdd7-d5baba926a3f",
+      "type": "world",
+      "name": "Eirath Core Lore",
+      "description": "Immutable world foundations: races, cultures, cosmology.",
+      "data": {
+        "races": {
+          "Human": {
+            "lifespan": "~80 years",
+            "traits": [
+              "adaptable",
+              "ambitious"
+            ],
+            "culture": "Diverse city-states; festivals mark trade seasons."
+          },
+          "Elf": {
+            "lifespan": "immortal until crowned monarchs",
+            "traits": [
+              "attuned to magic",
+              "patient"
+            ],
+            "culture": "Art bound to memory; monarchs age rapidly, shaping succession myths."
+          },
+          "Dwarf": {
+            "lifespan": "~200 years",
+            "traits": [
+              "stubborn",
+              "craft-bound"
+            ],
+            "culture": "Guild clans; oaths carry legal weight across holds."
+          },
+          "Halfling": {
+            "lifespan": "~100 years",
+            "traits": [
+              "cheerful",
+              "resourceful"
+            ],
+            "culture": "Market-faring caravans; hospitality is sacred."
+          },
+          "Dragonborn": {
+            "lifespan": "~70 years",
+            "traits": [
+              "proud",
+              "oathbound"
+            ],
+            "culture": "Clan creeds; ancestral breathlines honored in rites."
+          },
+          "Gnome": {
+            "lifespan": "~350 years",
+            "traits": [
+              "inquisitive",
+              "tinkerers"
+            ],
+            "culture": "Workshops under willows; inventions double as folk art."
+          },
+          "Half-Elf": {
+            "lifespan": "~120 years",
+            "traits": [
+              "bridge-born",
+              "adaptable"
+            ],
+            "culture": "Go-betweens in courts; multilingual diplomacy traditions."
+          },
+          "Half-Orc": {
+            "lifespan": "~75 years",
+            "traits": [
+              "resilient",
+              "honor-bound"
+            ],
+            "culture": "Warband codes turned civic charters in frontier towns."
+          },
+          "Tiefling": {
+            "lifespan": "humanlike",
+            "traits": [
+              "fiend-touched",
+              "resilient"
+            ],
+            "culture": "Diasporic enclaves; reputations negotiated via favor-debts."
+          },
+          "Other": {
+            "lifespan": "varies",
+            "traits": [
+              "mysterious"
+            ],
+            "culture": "To be defined per story."
+          }
+        },
+        "calendars": {
+          "major_holidays": [
+            "Last Ember (year's turning)",
+            "First Sowing (spring pledge)",
+            "Veil Night (ancestral remembrance)"
+          ]
+        },
+        "religions": [
+          "The Octave (eight domains of virtue)",
+          "The Tide (sea pact cults)"
+        ],
+        "magic": {
+          "sources": [
+            "ley-lines",
+            "oaths",
+            "bloodline relics"
+          ],
+          "taboos": [
+            "binding true names"
+          ]
+        },
+        "politics_template": {
+          "blocs": [
+            "Guild Compact",
+            "Wardens' League",
+            "Night Veil"
+          ],
+          "notes": "Templates only; actual alliances are generated per session."
+        }
+      },
+      "updatedAt": "2025-09-16T17:39:19.136Z"
+    },
+    {
+      "id": "76ac8b8a-cd0a-44ca-9c5b-9110dfda07aa",
+      "type": "character",
+      "name": "Player Character",
+      "description": "Bob, a Male Human",
+      "data": {
+        "name": "Bob",
+        "gender": "Male",
+        "race": "Human",
+        "backstory": {},
+        "revealedTraits": [],
+        "isPlayerCharacter": true
+      },
+      "updatedAt": "2025-09-16T17:39:19.140Z"
+    },
+    {
+      "id": "88c46723-49c3-4972-93d3-b4e755993185",
+      "type": "beginning",
+      "name": "Academy of Hearts",
+      "description": "Whispers, duels, and stolen glances at a prestigious academy.",
+      "data": {
+        "key": "romance",
+        "title": "Academy of Hearts",
+        "description": "Whispers, duels, and stolen glances at a prestigious academy.",
+        "seed": {
+          "story": [
+            {
+              "type": "story",
+              "name": "Moonspire Academy",
+              "description": "Scholars, duels, and dances.",
+              "data": {
+                "hooks": [
+                  "forbidden club",
+                  "faculty intrigue"
+                ]
+              }
+            },
+            {
+              "type": "environment",
+              "name": "Grand Quadrangle",
+              "description": "Dorms and lecture halls converge.",
+              "data": {
+                "events": [
+                  "masquerade",
+                  "exams week"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "updatedAt": "2025-09-16T17:39:19.147Z"
+    },
+    {
+      "id": "de064125-d8af-48a6-bc11-b7cdaf2b5d75",
+      "type": "story",
+      "name": "Moonspire Academy",
+      "description": "Scholars, duels, and dances.",
+      "data": {
+        "hooks": [
+          "forbidden club",
+          "faculty intrigue"
+        ]
+      },
+      "updatedAt": "2025-09-16T17:39:19.151Z"
+    },
+    {
+      "id": "798b04c1-3980-4fe3-ba6c-985bce1421dd",
+      "type": "environment",
+      "name": "Grand Quadrangle",
+      "description": "Dorms and lecture halls converge.",
+      "data": {
+        "events": [
+          "masquerade",
+          "exams week"
+        ]
+      },
+      "updatedAt": "2025-09-16T17:39:19.155Z"
+    }
+  ]
+}

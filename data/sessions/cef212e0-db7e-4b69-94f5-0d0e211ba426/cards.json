@@ -1,0 +1,204 @@
+{
+  "cards": [
+    {
+      "id": "d5b4225a-c654-4ca6-9e62-1ea9f6b5d9ba",
+      "type": "world",
+      "name": "Eirath Core Lore",
+      "description": "Immutable world foundations: races, cultures, cosmology.",
+      "data": {
+        "races": {
+          "Human": {
+            "lifespan": "~80 years",
+            "traits": [
+              "adaptable",
+              "ambitious"
+            ],
+            "culture": "Diverse city-states; festivals mark trade seasons."
+          },
+          "Elf": {
+            "lifespan": "immortal until crowned monarchs",
+            "traits": [
+              "attuned to magic",
+              "patient"
+            ],
+            "culture": "Art bound to memory; monarchs age rapidly, shaping succession myths."
+          },
+          "Dwarf": {
+            "lifespan": "~200 years",
+            "traits": [
+              "stubborn",
+              "craft-bound"
+            ],
+            "culture": "Guild clans; oaths carry legal weight across holds."
+          },
+          "Halfling": {
+            "lifespan": "~100 years",
+            "traits": [
+              "cheerful",
+              "resourceful"
+            ],
+            "culture": "Market-faring caravans; hospitality is sacred."
+          },
+          "Dragonborn": {
+            "lifespan": "~70 years",
+            "traits": [
+              "proud",
+              "oathbound"
+            ],
+            "culture": "Clan creeds; ancestral breathlines honored in rites."
+          },
+          "Gnome": {
+            "lifespan": "~350 years",
+            "traits": [
+              "inquisitive",
+              "tinkerers"
+            ],
+            "culture": "Workshops under willows; inventions double as folk art."
+          },
+          "Half-Elf": {
+            "lifespan": "~120 years",
+            "traits": [
+              "bridge-born",
+              "adaptable"
+            ],
+            "culture": "Go-betweens in courts; multilingual diplomacy traditions."
+          },
+          "Half-Orc": {
+            "lifespan": "~75 years",
+            "traits": [
+              "resilient",
+              "honor-bound"
+            ],
+            "culture": "Warband codes turned civic charters in frontier towns."
+          },
+          "Tiefling": {
+            "lifespan": "humanlike",
+            "traits": [
+              "fiend-touched",
+              "resilient"
+            ],
+            "culture": "Diasporic enclaves; reputations negotiated via favor-debts."
+          },
+          "Other": {
+            "lifespan": "varies",
+            "traits": [
+              "mysterious"
+            ],
+            "culture": "To be defined per story."
+          }
+        },
+        "calendars": {
+          "major_holidays": [
+            "Last Ember (year's turning)",
+            "First Sowing (spring pledge)",
+            "Veil Night (ancestral remembrance)"
+          ]
+        },
+        "religions": [
+          "The Octave (eight domains of virtue)",
+          "The Tide (sea pact cults)"
+        ],
+        "magic": {
+          "sources": [
+            "ley-lines",
+            "oaths",
+            "bloodline relics"
+          ],
+          "taboos": [
+            "binding true names"
+          ]
+        },
+        "politics_template": {
+          "blocs": [
+            "Guild Compact",
+            "Wardens' League",
+            "Night Veil"
+          ],
+          "notes": "Templates only; actual alliances are generated per session."
+        }
+      },
+      "updatedAt": "2025-09-10T15:03:42.354Z"
+    },
+    {
+      "id": "c74271d8-7acd-468d-8f4c-4c1f6989057e",
+      "type": "character",
+      "name": "Player Character",
+      "description": "Shen, a Male Elf",
+      "data": {
+        "name": "Shen",
+        "gender": "Male",
+        "race": "Elf",
+        "backstory": {},
+        "revealedTraits": [],
+        "isPlayerCharacter": true
+      },
+      "updatedAt": "2025-09-10T15:03:42.357Z"
+    },
+    {
+      "id": "0a825838-3116-4a45-a756-c207177c88cd",
+      "type": "beginning",
+      "name": "Crucible of Steel",
+      "description": "Steel flashes, stakes are high—your first step lands in a fight.",
+      "data": {
+        "key": "combat",
+        "title": "Crucible of Steel",
+        "description": "Steel flashes, stakes are high—your first step lands in a fight.",
+        "seed": {
+          "story": [
+            {
+              "type": "story",
+              "name": "Conflict Zone",
+              "description": "Tensions primed for violence.",
+              "data": {
+                "hooks": [
+                  "ambush at dawn",
+                  "beast on the loose"
+                ]
+              }
+            },
+            {
+              "type": "environment",
+              "name": "Battleground",
+              "description": "Constrained terrain with hazards.",
+              "data": {
+                "features": [
+                  "cover",
+                  "elevation",
+                  "flammables"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "updatedAt": "2025-09-10T15:03:42.363Z"
+    },
+    {
+      "id": "68058a70-02a5-43f0-bfd4-75e1cfea02d8",
+      "type": "story",
+      "name": "Conflict Zone",
+      "description": "Tensions primed for violence.",
+      "data": {
+        "hooks": [
+          "ambush at dawn",
+          "beast on the loose"
+        ]
+      },
+      "updatedAt": "2025-09-10T15:03:42.366Z"
+    },
+    {
+      "id": "643dc5b2-7d6a-4d42-968a-891a216fdf6f",
+      "type": "environment",
+      "name": "Battleground",
+      "description": "Constrained terrain with hazards.",
+      "data": {
+        "features": [
+          "cover",
+          "elevation",
+          "flammables"
+        ]
+      },
+      "updatedAt": "2025-09-10T15:03:42.369Z"
+    }
+  ]
+}

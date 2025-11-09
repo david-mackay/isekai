@@ -1,0 +1,116 @@
+"use client";
+import { useEffect, useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import LoadingDots from "./LoadingDots";
+
+type ChatMessage = { role: "dm" | "you"; content: string };
+
+export default function ChatWindow({
+  messages,
+  loading,
+  onSuggest,
+}: {
+  messages: ChatMessage[];
+  loading: boolean;
+  onSuggest?: (text: string) => void;
+}) {
+  const [animatedText, setAnimatedText] = useState("");
+  const [animating, setAnimating] = useState(false);
+
+  const last = messages[messages.length - 1];
+  const shouldAnimate = last && last.role === "dm";
+
+  useEffect(() => {
+    if (!shouldAnimate || !last) {
+      setAnimating(false);
+      setAnimatedText("");
+      return;
+    }
+    const content = last.content;
+    setAnimating(true);
+    setAnimatedText("");
+    let i = 0;
+    const stride = Math.max(1, Math.floor(content.length / 120));
+    let raf = 0;
+    const step = () => {
+      i += stride;
+      setAnimatedText(content.slice(0, i));
+      if (i < content.length) raf = requestAnimationFrame(step);
+      else setAnimating(false);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [shouldAnimate, last]);
+
+  const rendered = useMemo(() => {
+    if (!shouldAnimate) return messages;
+    const clone = messages.slice(0, -1);
+    clone.push({ role: "dm", content: animatedText });
+    return clone;
+  }, [messages, shouldAnimate, animatedText]);
+
+  return (
+    <div className="border rounded p-4 h-[70vh] md:h-[60vh] overflow-y-auto bg-white/5">
+      {rendered.length === 0 ? (
+        <p className="opacity-70">Press Continue to begin, or Say/Do to act.</p>
+      ) : (
+        <div className="space-y-3">
+          {rendered.map((m, i) => (
+            <div key={i} className={m.role === "dm" ? "" : "text-emerald-300"}>
+              <span className="font-mono text-xs mr-2 opacity-60">
+                {m.role === "dm" ? "DM" : "You"}
+              </span>
+              <div className="inline prose prose-invert prose-sm max-w-none">
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => <span>{children}</span>,
+                    strong: ({ children }) => {
+                      const text = Array.isArray(children)
+                        ? children.join("")
+                        : String(children ?? "");
+                      const clickable =
+                        m.role === "dm" &&
+                        onSuggest &&
+                        text.length > 0 &&
+                        text.length <= 80;
+                      return clickable ? (
+                        <button
+                          type="button"
+                          onClick={() => onSuggest?.(text)}
+                          className="font-bold text-yellow-300 underline decoration-dotted hover:decoration-solid cursor-pointer"
+                          title="Click to use this as your action"
+                        >
+                          {children}
+                        </button>
+                      ) : (
+                        <strong className="font-bold text-yellow-300">
+                          {children}
+                        </strong>
+                      );
+                    },
+                    em: ({ children }) => (
+                      <em className="italic text-blue-300">{children}</em>
+                    ),
+                  }}
+                >
+                  {m.content}
+                </ReactMarkdown>
+              </div>
+            </div>
+          ))}
+          {(loading || animating) && (
+            <div className="flex items-center gap-2 text-sm opacity-70">
+              <span className="font-mono text-xs">DM</span>
+              <div className="flex items-center gap-1">
+                <LoadingDots />
+                <span className="text-xs italic">
+                  {loading ? "thinking..." : "typing..."}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

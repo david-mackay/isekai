@@ -1,0 +1,386 @@
+{
+  "cards": [
+    {
+      "id": "4bd261d2-bf89-4895-9941-c4f1c9168d10",
+      "type": "world",
+      "name": "Eirath Core Lore",
+      "description": "Immutable world foundations: races, cultures, cosmology.",
+      "data": {
+        "races": {
+          "Human": {
+            "lifespan": "~80 years",
+            "traits": [
+              "adaptable",
+              "ambitious"
+            ],
+            "culture": "Diverse city-states; festivals mark trade seasons."
+          },
+          "Elf": {
+            "lifespan": "immortal until crowned monarchs",
+            "traits": [
+              "attuned to magic",
+              "patient"
+            ],
+            "culture": "Art bound to memory; monarchs age rapidly, shaping succession myths."
+          },
+          "Dwarf": {
+            "lifespan": "~200 years",
+            "traits": [
+              "stubborn",
+              "craft-bound"
+            ],
+            "culture": "Guild clans; oaths carry legal weight across holds."
+          },
+          "Halfling": {
+            "lifespan": "~100 years",
+            "traits": [
+              "cheerful",
+              "resourceful"
+            ],
+            "culture": "Market-faring caravans; hospitality is sacred."
+          },
+          "Dragonborn": {
+            "lifespan": "~70 years",
+            "traits": [
+              "proud",
+              "oathbound"
+            ],
+            "culture": "Clan creeds; ancestral breathlines honored in rites."
+          },
+          "Gnome": {
+            "lifespan": "~350 years",
+            "traits": [
+              "inquisitive",
+              "tinkerers"
+            ],
+            "culture": "Workshops under willows; inventions double as folk art."
+          },
+          "Half-Elf": {
+            "lifespan": "~120 years",
+            "traits": [
+              "bridge-born",
+              "adaptable"
+            ],
+            "culture": "Go-betweens in courts; multilingual diplomacy traditions."
+          },
+          "Half-Orc": {
+            "lifespan": "~75 years",
+            "traits": [
+              "resilient",
+              "honor-bound"
+            ],
+            "culture": "Warband codes turned civic charters in frontier towns."
+          },
+          "Tiefling": {
+            "lifespan": "humanlike",
+            "traits": [
+              "fiend-touched",
+              "resilient"
+            ],
+            "culture": "Diasporic enclaves; reputations negotiated via favor-debts."
+          },
+          "Other": {
+            "lifespan": "varies",
+            "traits": [
+              "mysterious"
+            ],
+            "culture": "To be defined per story."
+          }
+        },
+        "calendars": {
+          "major_holidays": [
+            "Last Ember (year's turning)",
+            "First Sowing (spring pledge)",
+            "Veil Night (ancestral remembrance)"
+          ]
+        },
+        "religions": [
+          "The Octave (eight domains of virtue)",
+          "The Tide (sea pact cults)"
+        ],
+        "magic": {
+          "sources": [
+            "ley-lines",
+            "oaths",
+            "bloodline relics"
+          ],
+          "taboos": [
+            "binding true names"
+          ]
+        },
+        "politics_template": {
+          "blocs": [
+            "Guild Compact",
+            "Wardens' League",
+            "Night Veil"
+          ],
+          "notes": "Templates only; actual alliances are generated per session."
+        }
+      },
+      "updatedAt": "2025-09-07T10:51:09.943Z"
+    },
+    {
+      "id": "f58131e0-2c25-426e-939a-f2cd57ec71e7",
+      "type": "character",
+      "name": "Player Character",
+      "description": "Ryze, a Male Elf",
+      "data": {
+        "name": "Ryze",
+        "gender": "Male",
+        "race": "Elf",
+        "backstory": {
+          "background": [
+            {
+              "element": "Unfamiliar with the Tide",
+              "description": "Ryze revealed his ignorance of the Tide, a significant faction or cult in this world, when he mistook basic magic seals for something far more sinister. This suggests he may be from a region or background where the Tide's influence is minimal or unknown, or he has been isolated from such knowledge.",
+              "revealedAt": "2025-09-07T11:05:40.651Z"
+            },
+            {
+              "element": "Unfamiliar with the Tide",
+              "description": "Ryze revealed his ignorance of the Tide, a significant faction or cult in this world, when he mistook basic magic seals for something far more sinister. This suggests he may be from a region or background where the Tide's influence is minimal or unknown, or he has been isolated from such knowledge.",
+              "revealedAt": "2025-09-07T11:05:40.651Z"
+            },
+            {
+              "element": "Unfamiliar with the Tide",
+              "description": "Ryze revealed his ignorance of the Tide, a significant faction or cult in this world, when he mistook basic magic seals for something far more sinister. This suggests he may be from a region or background where the Tide's influence is minimal or unknown, or he has been isolated from such knowledge.",
+              "revealedAt": "2025-09-07T11:05:40.651Z"
+            },
+            {
+              "element": "Unfamiliar with the Tide",
+              "description": "Ryze revealed his ignorance of the Tide, a significant faction or cult in this world, when he mistook basic magic seals for something far more sinister. This suggests he may be from a region or background where the Tide's influence is minimal or unknown, or he has been isolated from such knowledge.",
+              "revealedAt": "2025-09-07T11:05:40.651Z"
+            },
+            {
+              "element": "Distrust of Authority Figures",
+              "description": "Ryze's reaction to the crew's hostility and his suspicion of their motives suggest a deep-seated distrust of authority figures or those in positions of power. This could stem from past betrayals, a history of being manipulated, or a background where survival depended on self-reliance rather than trust in others. His immediate assumption that the crew would throw him overboard if he failed to prove his worth reflects a worldview shaped by harsh experiences.",
+              "revealedAt": "2025-09-07T11:11:54.523Z"
+            },
+            {
+              "element": "Unfamiliar with the Tide",
+              "description": "Ryze revealed his ignorance of the Tide, a significant faction or cult in this world, when he mistook basic magic seals for something far more sinister. This suggests he may be from a region or background where the Tide's influence is minimal or unknown, or he has been isolated from such knowledge.",
+              "revealedAt": "2025-09-07T11:05:40.651Z"
+            },
+            {
+              "element": "Unfamiliar with the Tide",
+              "description": "Ryze revealed his ignorance of the Tide, a significant faction or cult in this world, when he mistook basic magic seals for something far more sinister. This suggests he may be from a region or background where the Tide's influence is minimal or unknown, or he has been isolated from such knowledge.",
+              "revealedAt": "2025-09-07T11:05:40.651Z"
+            },
+            {
+              "element": "Unfamiliar with the Tide",
+              "description": "Ryze revealed his ignorance of the Tide, a significant faction or cult in this world, when he mistook basic magic seals for something far more sinister. This suggests he may be from a region or background where the Tide's influence is minimal or unknown, or he has been isolated from such knowledge.",
+              "revealedAt": "2025-09-07T11:05:40.651Z"
+            },
+            {
+              "element": "Unfamiliar with the Tide",
+              "description": "Ryze revealed his ignorance of the Tide, a significant faction or cult in this world, when he mistook basic magic seals for something far more sinister. This suggests he may be from a region or background where the Tide's influence is minimal or unknown, or he has been isolated from such knowledge.",
+              "revealedAt": "2025-09-07T11:05:40.651Z"
+            },
+            {
+              "element": "Distrust of Authority Figures",
+              "description": "Ryze's reaction to the crew's hostility and his suspicion of their motives suggest a deep-seated distrust of authority figures or those in positions of power. This could stem from past betrayals, a history of being manipulated, or a background where survival depended on self-reliance rather than trust in others. His immediate assumption that the crew would throw him overboard if he failed to prove his worth reflects a worldview shaped by harsh experiences.",
+              "revealedAt": "2025-09-07T11:11:54.523Z"
+            },
+            {
+              "element": "Veyla's Protege",
+              "description": "Ryze revealed that Veyla once mentored him as a navigator, proclaiming he would be the greatest navigator the world had ever seen. This suggests a deep history between them, one tied to ambition, trust, and possibly betrayal or sacrifice. The mention of the Mirage, a ship or event that was supposed to kill him, implies a transformative or traumatic experience that reshaped his fate and Veyla's actions.",
+              "revealedAt": "2025-09-07T11:29:43.281Z"
+            }
+          ],
+          "skill": [
+            {
+              "element": "Skilled in Arcane Navigation",
+              "description": "Ryze demonstrated the ability to cast a spell like 'Bird Sight' to gain an aerial perspective, revealing a hidden path through the treacherous Shattered Shoals. This suggests a background in arcane navigation or magical exploration, likely honed in environments where traditional maps and tools were unreliable or unavailable. His skill not only saved the crew but also revealed his value to them, despite their initial hostility.",
+              "revealedAt": "2025-09-07T11:09:36.769Z"
+            },
+            {
+              "element": "Skilled in Arcane Navigation",
+              "description": "Ryze demonstrated the ability to cast a spell like 'Bird Sight' to gain an aerial perspective, revealing a hidden path through the treacherous Shattered Shoals. This suggests a background in arcane navigation or magical exploration, likely honed in environments where traditional maps and tools were unreliable or unavailable. His skill not only saved the crew but also revealed his value to them, despite their initial hostility.",
+              "revealedAt": "2025-09-07T11:09:36.769Z"
+            },
+            {
+              "element": "Skilled in Arcane Navigation",
+              "description": "Ryze demonstrated the ability to cast a spell like 'Bird Sight' to gain an aerial perspective, revealing a hidden path through the treacherous Shattered Shoals. This suggests a background in arcane navigation or magical exploration, likely honed in environments where traditional maps and tools were unreliable or unavailable. His skill not only saved the crew but also revealed his value to them, despite their initial hostility.",
+              "revealedAt": "2025-09-07T11:09:36.769Z"
+            },
+            {
+              "element": "Skilled in Arcane Navigation",
+              "description": "Ryze demonstrated the ability to cast a spell like 'Bird Sight' to gain an aerial perspective, revealing a hidden path through the treacherous Shattered Shoals. This suggests a background in arcane navigation or magical exploration, likely honed in environments where traditional maps and tools were unreliable or unavailable. His skill not only saved the crew but also revealed his value to them, despite their initial hostility.",
+              "revealedAt": "2025-09-07T11:09:36.769Z"
+            }
+          ]
+        },
+        "revealedTraits": [
+          "Unfamiliar with the Tide",
+          "Unfamiliar with the Tide",
+          "Skilled in Arcane Navigation",
+          "Unfamiliar with the Tide",
+          "Unfamiliar with the Tide",
+          "Skilled in Arcane Navigation",
+          "Distrust of Authority Figures",
+          "Unfamiliar with the Tide",
+          "Unfamiliar with the Tide",
+          "Skilled in Arcane Navigation",
+          "Unfamiliar with the Tide",
+          "Unfamiliar with the Tide",
+          "Skilled in Arcane Navigation",
+          "Distrust of Authority Figures",
+          "Veyla's Protege"
+        ],
+        "isPlayerCharacter": true
+      },
+      "updatedAt": "2025-09-07T11:29:43.283Z"
+    },
+    {
+      "id": "a25fd173-c9f8-44ee-9756-54ea43e5cc00",
+      "type": "beginning",
+      "name": "Chart the Unknown",
+      "description": "Salt wind, secret maps, and the pull of uncharted horizons.",
+      "data": {
+        "key": "exploration",
+        "title": "Chart the Unknown",
+        "description": "Salt wind, secret maps, and the pull of uncharted horizons.",
+        "seed": {
+          "story": [
+            {
+              "type": "story",
+              "name": "Sable Gull (Cutter)",
+              "description": "Pirate/privateer cutter bound for the Shattered Shoals.",
+              "data": {
+                "hooks": [
+                  "mutiny brewing",
+                  "map fragment"
+                ]
+              }
+            },
+            {
+              "type": "environment",
+              "name": "Stormdeck",
+              "description": "Slick planks, roaring sail, and watchful eyes.",
+              "data": {
+                "hazards": [
+                  "rigging",
+                  "squalls"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "updatedAt": "2025-09-07T10:51:09.945Z"
+    },
+    {
+      "id": "83759d22-8660-403e-a46f-3ce76f51c89a",
+      "type": "story",
+      "name": "Sable Gull (Cutter)",
+      "description": "Pirate/privateer cutter bound for the Shattered Shoals.",
+      "data": {
+        "hooks": [
+          "mutiny brewing",
+          "map fragment"
+        ]
+      },
+      "updatedAt": "2025-09-07T10:51:09.947Z"
+    },
+    {
+      "id": "e0f88f78-3483-4dae-bb29-872a53a76a73",
+      "type": "environment",
+      "name": "Stormdeck",
+      "description": "Slick planks, roaring sail, and watchful eyes.",
+      "data": {
+        "hazards": [
+          "rigging",
+          "squalls"
+        ]
+      },
+      "updatedAt": "2025-09-07T10:51:09.949Z"
+    },
+    {
+      "id": "f22578c8-a443-446e-bfe8-e908a7220f48",
+      "type": "faction",
+      "name": "The Tide",
+      "description": "A secretive and feared cult or faction centered around sea pacts, maritime power, and ancient maritime traditions. Their influence is marked by specific seals and symbols, and they are known to be both revered and feared by sailors and pirates alike.",
+      "data": {
+        "influence": "maritime regions, pirate crews, coastal cities",
+        "symbols": [
+          "seals of protection",
+          "spiral motifs",
+          "silver ink"
+        ],
+        "reputation": "feared and respected, associated with both protection and danger",
+        "goals": [
+          "control over sea routes",
+          "preservation of ancient maritime secrets",
+          "expansion of influence through pacts and alliances"
+        ]
+      },
+      "updatedAt": "2025-09-07T11:05:40.654Z"
+    },
+    {
+      "id": "9b6d3419-a090-43c6-903e-492348848fa8",
+      "type": "character",
+      "name": "Jask",
+      "description": "First mate of the Sable Gull, a grizzled human with a scar running down one side of his face. Ruthless but pragmatic, he values competence and survival above all else.",
+      "data": {
+        "traits": [
+          "loyal to Veyla",
+          "distrustful of outsiders",
+          "pragmatic",
+          "superstitious about the Tide"
+        ],
+        "relationships": {
+          "Veyla": "trusts her leadership but questions her risks",
+          "Ryze": "initially hostile but now grudgingly respectful after Ryze proved his skill"
+        },
+        "goals": [
+          "survive the Shoals",
+          "protect the crew",
+          "uncover the truth about the map fragment"
+        ]
+      },
+      "updatedAt": "2025-09-07T11:11:54.519Z"
+    },
+    {
+      "id": "cb32aa2a-7995-4bfc-be02-45b6e976a299",
+      "type": "character",
+      "name": "Veyla",
+      "description": "Captain of the Sable Gull, a sharp-witted and authoritative human woman with a reputation for daring runs through dangerous waters. She is marked by the Tide but plays her cards close to her chest.",
+      "data": {
+        "traits": [
+          "bold",
+          "calculating",
+          "protective of her crew",
+          "knowledgeable about the Tide"
+        ],
+        "relationships": {
+          "Jask": "relies on his pragmatism but keeps him at arm's length",
+          "Ryze": "intrigued by his arcane skills and ignorance of the Tide, sees potential in him"
+        },
+        "goals": [
+          "navigate the Shattered Shoals",
+          "uncover the secrets of the map fragment",
+          "maintain control over her crew"
+        ]
+      },
+      "updatedAt": "2025-09-07T11:11:54.521Z"
+    },
+    {
+      "id": "dbfd0fa6-e66d-4400-8b18-947447f4f068",
+      "type": "story",
+      "name": "Sable Gull: Trust and the Tide",
+      "description": "A moment of confrontation and revelation as Ryze challenges the crew's loyalty and intentions, exposing his own distrust and the fragile balance of trust aboard the Sable Gull.",
+      "data": {
+        "keyMoments": [
+          "Ryze questions the crew's trust in him",
+          "Veyla's pragmatic leadership is tested",
+          "Jask's hostility shifts to grudging respect"
+        ],
+        "consequences": [
+          "The crew's perception of Ryze shifts from outsider to potential ally",
+          "Veyla's authority is reinforced but her secrets are now under scrutiny",
+          "The tension between survival and loyalty is highlighted"
+        ]
+      },
+      "updatedAt": "2025-09-07T11:11:54.526Z"
+    }
+  ]
+}

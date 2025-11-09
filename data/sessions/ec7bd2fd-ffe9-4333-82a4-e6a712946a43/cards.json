@@ -1,0 +1,241 @@
+{
+  "cards": [
+    {
+      "id": "183822cb-c04e-4ecc-aecb-6165f06f9538",
+      "type": "world",
+      "name": "Eirath Core Lore",
+      "description": "Immutable world foundations: races, cultures, cosmology.",
+      "data": {
+        "races": {
+          "Human": {
+            "lifespan": "~80 years",
+            "traits": [
+              "adaptable",
+              "ambitious"
+            ],
+            "culture": "Diverse city-states; festivals mark trade seasons."
+          },
+          "Elf": {
+            "lifespan": "immortal until crowned monarchs",
+            "traits": [
+              "attuned to magic",
+              "patient"
+            ],
+            "culture": "Art bound to memory; monarchs age rapidly, shaping succession myths."
+          },
+          "Dwarf": {
+            "lifespan": "~200 years",
+            "traits": [
+              "stubborn",
+              "craft-bound"
+            ],
+            "culture": "Guild clans; oaths carry legal weight across holds."
+          },
+          "Halfling": {
+            "lifespan": "~100 years",
+            "traits": [
+              "cheerful",
+              "resourceful"
+            ],
+            "culture": "Market-faring caravans; hospitality is sacred."
+          },
+          "Dragonborn": {
+            "lifespan": "~70 years",
+            "traits": [
+              "proud",
+              "oathbound"
+            ],
+            "culture": "Clan creeds; ancestral breathlines honored in rites."
+          },
+          "Gnome": {
+            "lifespan": "~350 years",
+            "traits": [
+              "inquisitive",
+              "tinkerers"
+            ],
+            "culture": "Workshops under willows; inventions double as folk art."
+          },
+          "Half-Elf": {
+            "lifespan": "~120 years",
+            "traits": [
+              "bridge-born",
+              "adaptable"
+            ],
+            "culture": "Go-betweens in courts; multilingual diplomacy traditions."
+          },
+          "Half-Orc": {
+            "lifespan": "~75 years",
+            "traits": [
+              "resilient",
+              "honor-bound"
+            ],
+            "culture": "Warband codes turned civic charters in frontier towns."
+          },
+          "Tiefling": {
+            "lifespan": "humanlike",
+            "traits": [
+              "fiend-touched",
+              "resilient"
+            ],
+            "culture": "Diasporic enclaves; reputations negotiated via favor-debts."
+          },
+          "Other": {
+            "lifespan": "varies",
+            "traits": [
+              "mysterious"
+            ],
+            "culture": "To be defined per story."
+          }
+        },
+        "calendars": {
+          "major_holidays": [
+            "Last Ember (year's turning)",
+            "First Sowing (spring pledge)",
+            "Veil Night (ancestral remembrance)"
+          ]
+        },
+        "religions": [
+          "The Octave (eight domains of virtue)",
+          "The Tide (sea pact cults)"
+        ],
+        "magic": {
+          "sources": [
+            "ley-lines",
+            "oaths",
+            "bloodline relics"
+          ],
+          "taboos": [
+            "binding true names"
+          ]
+        },
+        "politics_template": {
+          "blocs": [
+            "Guild Compact",
+            "Wardens' League",
+            "Night Veil"
+          ],
+          "notes": "Templates only; actual alliances are generated per session."
+        }
+      },
+      "updatedAt": "2025-09-07T10:04:06.254Z"
+    },
+    {
+      "id": "c57535b2-17c5-448a-b10f-dbce528575a7",
+      "type": "character",
+      "name": "Player Character",
+      "description": "Moki, a Female Dwarf",
+      "data": {
+        "name": "Moki",
+        "gender": "Female",
+        "race": "Dwarf",
+        "backstory": {
+          "skill": [
+            {
+              "element": "Strength Under Pressure",
+              "description": "Moki demonstrated exceptional physical strength and decisiveness by single-handedly hauling the cursed Night Veil shard into the Compact's vault while under attack by Veil-spawned shadows. This act not only saved Elara and the remaining guards but also proved their ability to act swiftly in life-or-death situations, earning Elara's respect.",
+              "revealedAt": "2025-09-07T10:35:56.760Z"
+            }
+          ]
+        },
+        "revealedTraits": [
+          "Strength Under Pressure"
+        ],
+        "isPlayerCharacter": true
+      },
+      "updatedAt": "2025-09-07T10:35:56.761Z"
+    },
+    {
+      "id": "ec6ef702-2b77-4178-ad91-e04206499713",
+      "type": "beginning",
+      "name": "Crown and Shadow",
+      "description": "Courts and war rooms where a single choice can tip a kingdom.",
+      "data": {
+        "key": "politics",
+        "title": "Crown and Shadow",
+        "description": "Courts and war rooms where a single choice can tip a kingdom.",
+        "seed": {
+          "story": [
+            {
+              "type": "story",
+              "name": "Border Marches",
+              "description": "Two blocs contest a vital route.",
+              "data": {
+                "factions": [
+                  "Guild Compact",
+                  "Wardens' League"
+                ],
+                "hooks": [
+                  "grain shortage",
+                  "sabotaged envoy"
+                ]
+              }
+            },
+            {
+              "type": "environment",
+              "name": "Council Hall",
+              "description": "Marble, banners, and tense guard lines.",
+              "data": {
+                "protocols": [
+                  "immunity",
+                  "oath-binding"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "updatedAt": "2025-09-07T10:04:06.259Z"
+    },
+    {
+      "id": "f7641f84-f080-4a63-9b43-494052b9aedf",
+      "type": "story",
+      "name": "Border Marches",
+      "description": "Two blocs contest a vital route.",
+      "data": {
+        "factions": [
+          "Guild Compact",
+          "Wardens' League"
+        ],
+        "hooks": [
+          "grain shortage",
+          "sabotaged envoy"
+        ]
+      },
+      "updatedAt": "2025-09-07T10:04:06.261Z"
+    },
+    {
+      "id": "acfe4a60-0654-46e4-a5ff-8fc559937eb4",
+      "type": "environment",
+      "name": "Council Hall",
+      "description": "Marble, banners, and tense guard lines.",
+      "data": {
+        "protocols": [
+          "immunity",
+          "oath-binding"
+        ]
+      },
+      "updatedAt": "2025-09-07T10:04:06.262Z"
+    },
+    {
+      "id": "4bd912c1-9966-475d-bd0d-9d9daf5f7200",
+      "type": "character",
+      "name": "Elara",
+      "description": "A human mercenary captain with a scarred lip and a sharp tongue, affiliated with the Guild Compact. Pragmatic, ruthless, and fiercely loyal to those who earn it.",
+      "data": {
+        "goals": [
+          "Deliver the Night Veil shard to the Compact's vault",
+          "Uncover who sabotaged the transfer"
+        ],
+        "relationships": {
+          "Moki": "Trust earned under fire; respects their decisiveness."
+        },
+        "notableTraits": [
+          "Expert tactician",
+          "Distrusts the Wardens' League",
+          "Knows the Compact's secrets"
+        ]
+      },
+      "updatedAt": "2025-09-07T10:35:56.757Z"
+    }
+  ]
+}
