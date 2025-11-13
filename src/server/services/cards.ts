@@ -2,6 +2,10 @@ import { and, eq, ilike } from "drizzle-orm";
 
 import { db } from "@/server/db";
 import { cards } from "@/server/db/schema";
+import {
+  mergeStructuredValues,
+  sanitizeStructuredObject,
+} from "@/lib/utils/structuredMerge";
 
 export type CardType =
   | "story"
@@ -31,27 +35,6 @@ type UpsertCardInput = {
   data?: Record<string, unknown>;
   id?: string;
 };
-
-function deepMerge(a: unknown, b: unknown): unknown {
-  if (Array.isArray(a) && Array.isArray(b)) {
-    return [...a, ...b];
-  }
-  if (
-    a &&
-    b &&
-    typeof a === "object" &&
-    typeof b === "object" &&
-    Object.getPrototypeOf(a) === Object.prototype &&
-    Object.getPrototypeOf(b) === Object.prototype
-  ) {
-    const out: Record<string, unknown> = { ...(a as Record<string, unknown>) };
-    for (const [key, value] of Object.entries(b as Record<string, unknown>)) {
-      out[key] = key in out ? deepMerge(out[key], value) : value;
-    }
-    return out;
-  }
-  return b ?? a;
-}
 
 function mapCard(row: typeof cards.$inferSelect): BaseCard {
   return {
@@ -117,17 +100,21 @@ export async function upsertCard(input: UpsertCardInput): Promise<BaseCard> {
   });
 
   if (existing) {
-    const mergedData = input.data
-      ? (existing.data
-          ? (deepMerge(existing.data, input.data) as Record<string, unknown>)
-          : input.data)
-      : existing.data;
+    const existingSanitized = sanitizeStructuredObject(existing.data);
+    const incomingSanitized = sanitizeStructuredObject(input.data);
+    const mergedData =
+      input.data !== undefined
+        ? (mergeStructuredValues(
+            existingSanitized,
+            incomingSanitized
+          ) as Record<string, unknown>)
+        : existingSanitized;
 
     const [updated] = await db
       .update(cards)
       .set({
         description: input.description ?? existing.description,
-        data: mergedData ?? existing.data,
+        data: mergedData,
         updatedAt: now,
         embedding: null,
       })
@@ -144,7 +131,7 @@ export async function upsertCard(input: UpsertCardInput): Promise<BaseCard> {
       type: input.type,
       name: input.name,
       description: input.description,
-      data: input.data ?? {},
+      data: sanitizeStructuredObject(input.data),
       updatedAt: now,
       embedding: null,
     })

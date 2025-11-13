@@ -8,14 +8,14 @@
     "start": "next start",
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "jobs:consolidate": "tsx scripts/consolidateCharacters.ts"
   },
   "dependencies": {
     "@langchain/community": "^0.3.54",
     "@langchain/core": "^0.3.73",
     "@langchain/langgraph": "^0.4.9",
-    "@langchain/mistralai": "^0.2.1",
-    "@mistralai/mistralai": "^1.10.0",
+    "@langchain/openai": "^0.3.10",
     "@reown/appkit": "^1.8.13",
     "@reown/appkit-adapter-solana": "^1.8.13",
     "@solana/wallet-adapter-wallets": "^0.19.37",
@@ -24,9 +24,9 @@
     "drizzle-orm": "^0.44.7",
     "jsonwebtoken": "^9.0.2",
     "next": "15.5.2",
+    "p-queue": "^8.0.1",
     "pg": "^8.16.3",
     "pgvector": "^0.2.1",
-    "p-queue": "^8.0.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-markdown": "^10.1.0",
@@ -39,11 +39,13 @@
     "@tailwindcss/postcss": "^4",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
+    "@types/pg": "^8.15.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "tailwindcss": "^4",
+    "tsx": "^4.19.1",
     "typescript": "^5"
   }
 }

@@ -5,6 +5,7 @@ export interface CharacterData {
   name: string;
   gender: string;
   race: string;
+  backstory?: string;
 }
 
 interface CharacterCreationProps {
@@ -33,6 +34,7 @@ export default function CharacterCreation({
     name: "",
     gender: "",
     race: "",
+    backstory: "",
   });
 
   const canProceed = () => {
@@ -44,9 +46,9 @@ export default function CharacterCreation({
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-2">Create Your Character</h2>
         <p className="text-gray-400">
-          Tell us the basics about your character. Your backstory will develop
-          naturally through the adventure as characters ask about your past and
-          you make choices that reveal who you are.
+          Tell us the basics about your character. You can optionally share a
+          short backstory to guide the opening scenes—our Dungeon Master will
+          weave it into the world and expand on it as you play.
         </p>
       </div>
 
@@ -100,6 +102,23 @@ export default function CharacterCreation({
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Backstory (optional)
+          </label>
+          <textarea
+            value={character.backstory ?? ""}
+            onChange={(e) =>
+              setCharacter((prev) => ({
+                ...prev,
+                backstory: e.target.value,
+              }))
+            }
+            className="w-full p-3 bg-gray-800 border border-gray-600 rounded focus:border-blue-500 focus:outline-none min-h-[120px]"
+            placeholder="Share formative moments, motivations, allies, or secrets you want woven into the opening chapter."
+          />
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { sql, and, eq, isNull, desc } from "drizzle-orm";
-import { MistralAIEmbeddings } from "@langchain/mistralai";
+import { OpenAIEmbeddings } from "@langchain/openai";
 
 import { db } from "@/server/db";
 import {
@@ -16,14 +16,16 @@ import {
   stringifyCardForIndex,
   getCards,
 } from "@/server/services/cards";
+import {
+  getOpenRouterApiKey,
+  getOpenRouterConfiguration,
+} from "@/lib/openrouter";
 
-const apiKey = process.env.MISTRAL_API_KEY;
-
-if (!apiKey) {
-  throw new Error("MISTRAL_API_KEY is not set");
-}
-
-const embeddingsClient = new MistralAIEmbeddings({ apiKey });
+const embeddingsClient = new OpenAIEmbeddings({
+  apiKey: getOpenRouterApiKey(),
+  model: "qwen/qwen3-embedding-0.6b",
+  configuration: getOpenRouterConfiguration(),
+});
 
 function toVectorLiteral(vector: number[]) {
   return sql.raw(`'[${vector.join(",")}]'`);

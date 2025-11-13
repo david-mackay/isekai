@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import LoadingDots from "./LoadingDots";
 
@@ -16,9 +16,22 @@ export default function ChatWindow({
 }) {
   const [animatedText, setAnimatedText] = useState("");
   const [animating, setAnimating] = useState(false);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const shouldAutoScrollRef = useRef(true);
 
   const last = messages[messages.length - 1];
   const shouldAnimate = last && last.role === "dm";
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const handleScroll = () => {
+      const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 24;
+      shouldAutoScrollRef.current = nearBottom;
+    };
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (!shouldAnimate || !last) {
@@ -49,8 +62,18 @@ export default function ChatWindow({
     return clone;
   }, [messages, shouldAnimate, animatedText]);
 
+  useEffect(() => {
+    if (!scrollerRef.current) return;
+    const el = scrollerRef.current;
+    if (!shouldAutoScrollRef.current) return;
+    el.scrollTop = el.scrollHeight;
+  }, [rendered, loading, animating]);
+
   return (
-    <div className="border rounded p-4 h-[70vh] md:h-[60vh] overflow-y-auto bg-white/5">
+    <div
+      ref={scrollerRef}
+      className="border rounded p-4 h-[70vh] md:h-[60vh] overflow-y-auto bg-white/5"
+    >
       {rendered.length === 0 ? (
         <p className="opacity-70">Press Continue to begin, or Say/Do to act.</p>
       ) : (

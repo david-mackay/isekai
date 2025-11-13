@@ -1,7 +1,8 @@
-import { ChatMistralAI } from "@langchain/mistralai";
+import { ChatOpenAI } from "@langchain/openai";
 // No prompt templates used directly; we drive a manual message loop for tool calls.
 import {
   AIMessage,
+  BaseMessage,
   HumanMessage,
   SystemMessage,
   ToolMessage,
@@ -10,11 +11,9 @@ import { getSettings } from "./settings";
 import { tools } from "./tools";
 import { readCards } from "./cards";
 import { buildVectorStoreFromCards, retrieveRelevant } from "./vector";
-import { appendToStory, readStory } from "./story";
-import {
-  recordMemories,
-  type RecordMemoryInput,
-} from "@/server/services/memories";
+import { appendToStory, readRecentMessages, readStory } from "./story";
+import { getOpenRouterApiKey, getOpenRouterConfiguration } from "./openrouter";
+import { resolveModelId } from "./modelOptions";
 
 export type UserAction =
   | { kind: "do"; text: string }
@@ -25,7 +24,9 @@ const systemPreamble = `You are an expert Dungeon Master for a D&D-like narrativ
 Goals:
 - Drive an engaging story in cinematic, immersive prose with short turns (4-8 sentences).
 - Always reflect consequences, sensory details, and reveal new hooks.
-- Use tools when needed: roll_dice for checks, update_or_create_card to keep world state consistent, update_player_backstory when backstory elements are revealed.
+- Use tools when needed: roll_dice for checks, update_or_create_card to keep world state consistent, update_player_backstory when backstory elements are revealed, record_memory to archive important facts or emotional beats worth recalling later.
+- Keep character sheets truthful: use upsert_character_stat to capture numeric or structured changes, and update_relationship to log shifts in trust, loyalty, rivalry, or alliances.
+- When the running transcript grows unwieldy, call summarize_story_context to condense recent events, queue durable memories, and ensure critical character data stays current.
 - Keep a consistent universe; consult retrieved cards for continuity (characters, locations, factions, items, quests).
  - Keep a consistent universe; consult retrieved cards for continuity (world, races, characters, locations, factions, items, quests). Prefer immutable facts from the single 'world' card when available.
 - After user 'do' actions, call roll_dice for uncertainty (e.g., stealth, persuasion, attack) and apply outcomes.
@@ -45,13 +46,13 @@ Constraints:
 Output:
 - Provide only the next story beat as narrative text. Avoid meta-commentary.`;
 
-function getModel() {
-  const apiKey = process.env.MISTRAL_API_KEY;
-  if (!apiKey) throw new Error("Missing MISTRAL_API_KEY");
-  return new ChatMistralAI({
+function getModel(modelId?: string) {
+  const apiKey = getOpenRouterApiKey();
+  return new ChatOpenAI({
     apiKey,
-    model: "mistral-large-latest",
+    model: resolveModelId(modelId),
     temperature: 0.9,
+    configuration: getOpenRouterConfiguration(),
   });
 }
 
@@ -78,39 +79,78 @@ function extractText(content: AIMessage["content"]): string {
 export async function runTurn(
   action: UserAction,
   sessionId?: string,
-  targetCharacter?: string
+  targetCharacter?: string,
+  modelId?: string
 ): Promise<string> {
   if (!sessionId) {
     throw new Error("Story ID is required");
   }
   const storyId = sessionId;
-  const model = getModel();
   const cards = await readCards(sessionId);
-  const playerCard = cards.find((card) => {
-    if (card.type !== "character") return false;
-    if (!card.data || typeof card.data !== "object") return false;
-    return Boolean((card.data as Record<string, unknown>).isPlayerCharacter);
-  });
-  const targetCard = targetCharacter
-    ? cards.find(
-        (card) =>
-          card.type === "character" &&
-          card.name.toLowerCase() === targetCharacter.toLowerCase()
-      )
-    : undefined;
   await buildVectorStoreFromCards(cards, sessionId);
   const storySoFar = await readStory(sessionId);
+  const recentMessages = await readRecentMessages(sessionId, 6);
   const settings = await getSettings(sessionId);
+  const model = getModel(modelId);
 
-  // Retrieve relevant world facts
-  const retrievalQuery =
-    action.kind === "say"
-      ? `Dialogue context for: ${action.text}`
-      : action.kind === "do"
-      ? `Action context for: ${action.text}`
-      : "Continue the current scene";
-  const docs = await retrieveRelevant(cards, retrievalQuery, 6, sessionId);
-  const ragSummary = docs.map((d) => `- ${d.pageContent}`).join("\n");
+  const playerCard = cards.find((card) => {
+    const data = (card.data ?? {}) as Record<string, unknown>;
+    return card.type === "character" && data.isPlayerCharacter === true;
+  });
+  const playerData = (playerCard?.data ?? {}) as Record<string, unknown>;
+  const initialBackstory =
+    typeof playerData.initialBackstory === "string"
+      ? playerData.initialBackstory.trim()
+      : "";
+  const initialBackstorySummary =
+    typeof playerData.initialBackstorySummary === "string"
+      ? playerData.initialBackstorySummary.trim()
+      : "";
+
+  const recentTranscript = recentMessages
+    .map(
+      (message) =>
+        `${message.role === "dm" ? "DM" : "Player"}: ${message.content}`
+    )
+    .join("\n");
+  const ragQueryParts: string[] = [];
+  if (recentTranscript) {
+    ragQueryParts.push(`Recent transcript:\n${recentTranscript}`);
+  }
+  if (initialBackstorySummary) {
+    ragQueryParts.push(`Player backstory summary:\n${initialBackstorySummary}`);
+  } else if (initialBackstory) {
+    ragQueryParts.push(`Player backstory:\n${initialBackstory}`);
+  }
+  if (action.kind === "say") {
+    ragQueryParts.push(`Player speech intent:\n${action.text}`);
+  } else if (action.kind === "do") {
+    ragQueryParts.push(`Player action intent:\n${action.text}`);
+  } else {
+    ragQueryParts.push("Continue the current scene.");
+  }
+  if (targetCharacter) {
+    ragQueryParts.push(`Target character focus: ${targetCharacter}`);
+  }
+  const retrievalQuery = ragQueryParts.join("\n\n");
+
+  const docs = await retrieveRelevant(cards, retrievalQuery, 8, sessionId);
+  let ragSummary = docs.map((d) => `- ${d.pageContent}`).join("\n");
+  if (initialBackstorySummary) {
+    const backstoryLine = `- Player Backstory: ${initialBackstorySummary}`;
+    if (!ragSummary.includes(initialBackstorySummary)) {
+      ragSummary = ragSummary
+        ? `${backstoryLine}\n${ragSummary}`
+        : backstoryLine;
+    }
+  } else if (initialBackstory) {
+    const backstoryLine = `- Player Backstory: ${initialBackstory}`;
+    if (!ragSummary.includes(initialBackstory)) {
+      ragSummary = ragSummary
+        ? `${backstoryLine}\n${ragSummary}`
+        : backstoryLine;
+    }
+  }
 
   // Find persisted beginning for this session and surface its seed explicitly
   const beginningCard = cards.find((c) => c.type === "beginning") as
@@ -123,12 +163,19 @@ export async function runTurn(
     : "";
 
   const toolModel = model.bindTools(tools);
-  const messages: (SystemMessage | HumanMessage | AIMessage | ToolMessage)[] = [
+  const storyIsEmpty = storySoFar.trim().length === 0;
+  const backstoryNote =
+    storyIsEmpty && (initialBackstorySummary || initialBackstory)
+      ? `\n\nPlayer Character Backstory:\n${
+          initialBackstorySummary || initialBackstory
+        }`
+      : "";
+  const messages: BaseMessage[] = [
     new SystemMessage(systemPreamble),
     new SystemMessage(
       `GM Settings: ${JSON.stringify(
         settings
-      )}${beginningSeed}\n\nStory so far (append-only log):\n${storySoFar.slice(
+      )}${beginningSeed}${backstoryNote}\n\nStory so far (append-only log):\n${storySoFar.slice(
         -8000
       )}\n\nRelevant world notes from cards via RAG:\n${ragSummary}${
         targetCharacter
@@ -149,7 +196,9 @@ export async function runTurn(
     ),
   ];
 
-  let ai = await toolModel.invoke(messages);
+  let ai = await toolModel.invoke(
+    messages as Parameters<typeof toolModel.invoke>[0]
+  );
   const maxTurns = 4;
   let turns = 0;
   type ToolCall = { id: string; name: string; args: unknown };
@@ -169,9 +218,15 @@ export async function runTurn(
       if (
         call.name === "update_or_create_card" ||
         call.name === "list_cards" ||
-        call.name === "update_player_backstory"
+        call.name === "update_player_backstory" ||
+        call.name === "record_memory" ||
+        call.name === "upsert_character_stat" ||
+        call.name === "update_relationship" ||
+        call.name === "summarize_story_context"
       ) {
-        (args as Record<string, unknown>).sessionId = sessionId;
+        if (!(args as Record<string, unknown>).sessionId) {
+          (args as Record<string, unknown>).sessionId = sessionId;
+        }
       }
       const result = await (
         tool as unknown as { invoke: (a: unknown) => Promise<unknown> }
@@ -180,85 +235,23 @@ export async function runTurn(
         new ToolMessage({ content: String(result), tool_call_id: call.id })
       );
     }
-    messages.push(ai, ...toolOutputs);
-    ai = await toolModel.invoke(messages);
+    messages.push(ai as unknown as BaseMessage, ...toolOutputs);
+    ai = await toolModel.invoke(
+      messages as Parameters<typeof toolModel.invoke>[0]
+    );
     turns++;
     toolCalls = getToolCalls(ai);
   }
 
   const text = extractText(ai.content);
-  const memoryInputs: RecordMemoryInput[] = [];
   // In private DM-to-character texting mode, do not append to the public story log
   if (!targetCharacter) {
     if (action.kind === "say") {
-      const playerMessage = await appendToStory(
-        `You say: "${action.text}"`,
-        storyId,
-        "you"
-      );
-      memoryInputs.push({
-        storyId,
-        summary: action.text ?? "",
-        sourceType: "player",
-        ownerCardId: playerCard?.id ?? null,
-        subjectCardId: targetCard?.id ?? null,
-        sourceMessageId: playerMessage.id,
-        context: {
-          mode: "say",
-          targetCharacter: targetCharacter ?? null,
-        },
-        tags: [
-          "player",
-          "say",
-          ...(targetCharacter ? [`target:${targetCharacter}`] : []),
-        ],
-        importance: 1,
-      });
+      await appendToStory(`You say: "${action.text}"`, storyId, "you");
     } else if (action.kind === "do") {
-      const playerMessage = await appendToStory(
-        `You do: ${action.text}`,
-        storyId,
-        "you"
-      );
-      memoryInputs.push({
-        storyId,
-        summary: action.text ?? "",
-        sourceType: "player",
-        ownerCardId: playerCard?.id ?? null,
-        subjectCardId: targetCard?.id ?? null,
-        sourceMessageId: playerMessage.id,
-        context: {
-          mode: "do",
-          targetCharacter: targetCharacter ?? null,
-        },
-        tags: [
-          "player",
-          "do",
-          ...(targetCharacter ? [`target:${targetCharacter}`] : []),
-        ],
-        importance: 1,
-      });
+      await appendToStory(`You do: ${action.text}`, storyId, "you");
     }
-
-    const dmMessage = await appendToStory(text, storyId, "dm");
-    memoryInputs.push({
-      storyId,
-      summary: text,
-      sourceType: "dm",
-      ownerCardId: targetCard?.id ?? null,
-      subjectCardId: playerCard?.id ?? null,
-      sourceMessageId: dmMessage.id,
-      context: {
-        mode: "story",
-        targetCharacter: targetCharacter ?? null,
-      },
-      tags: targetCard ? ["dm", "npc", `target:${targetCharacter}`] : ["dm"],
-      importance: targetCard ? 2 : 1,
-    });
-  }
-
-  if (memoryInputs.length > 0) {
-    await recordMemories(memoryInputs);
+    await appendToStory(text, storyId, "dm");
   }
   return text;
 }

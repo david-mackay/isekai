@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import type { CharacterData } from "./CharacterCreation";
 
 type Beginning = { key: string; title: string; description: string };
 
@@ -9,13 +10,12 @@ export default function BeginningsPicker({
   playerCharacter,
   onSelectWithoutCharacter,
 }: {
-  onSeeded: (beginningKey: string, beginningTitle: string) => Promise<void> | void;
+  onSeeded: (
+    beginningKey: string,
+    beginningTitle: string
+  ) => Promise<void> | void;
   isLoadingStory?: boolean;
-  playerCharacter?: {
-    name: string;
-    gender: string;
-    race: string;
-  };
+  playerCharacter?: CharacterData;
   onSelectWithoutCharacter?: (
     beginningKey: string,
     beginningTitle: string

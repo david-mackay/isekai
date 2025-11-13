@@ -2,7 +2,7 @@
 
 import { ReactNode } from "react";
 import { createAppKit } from "@reown/appkit/react";
-import { SolanaAdapter } from "@reown/appkit-adapter-solana";
+import { SolanaAdapter } from "@reown/appkit-adapter-solana/react";
 import { solana, solanaDevnet } from "@reown/appkit/networks";
 import {
   PhantomWalletAdapter,
@@ -41,8 +41,8 @@ createAppKit({
   defaultNetwork: solana,
   metadata,
   features: {
-    email: false,
-    socials: [],
+    email: true,
+    socials: ["google", "apple"],
   },
   allWallets: "SHOW",
 });

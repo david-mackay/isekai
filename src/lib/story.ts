@@ -1,4 +1,8 @@
-import { addStoryMessage, getStoryTranscript } from "@/server/services/stories";
+import {
+  addStoryMessage,
+  getStoryTranscript,
+  getStoryMessages,
+} from "@/server/services/stories";
 
 function requireStoryId(sessionId?: string) {
   if (!sessionId || sessionId.trim().length === 0) {
@@ -19,4 +23,14 @@ export async function appendToStory(
 export async function readStory(sessionId?: string): Promise<string> {
   const storyId = requireStoryId(sessionId);
   return getStoryTranscript(storyId);
+}
+
+export type StoryMessage = Awaited<ReturnType<typeof getStoryMessages>>[number];
+
+export async function readRecentMessages(
+  sessionId?: string,
+  limit = 6
+): Promise<StoryMessage[]> {
+  const storyId = requireStoryId(sessionId);
+  return getStoryMessages(storyId, { limit });
 }

@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readCards, type BaseCard } from "@/lib/cards";
 import { readStory } from "@/lib/story";
-import { ChatMistralAI } from "@langchain/mistralai";
 import { requireAuthenticatedUser } from "@/server/auth/session";
 import { assertStoryOwnership } from "@/server/services/stories";
+import { ChatOpenAI } from "@langchain/openai";
+import {
+  getOpenRouterApiKey,
+  getOpenRouterConfiguration,
+} from "@/lib/openrouter";
+import { resolveModelId } from "@/lib/modelOptions";
 
 type FeedPost = {
   id: string;
@@ -15,13 +20,13 @@ type FeedPost = {
   postType?: "status" | "photo" | "story";
 };
 
-function getModel() {
-  const apiKey = process.env.MISTRAL_API_KEY;
-  if (!apiKey) throw new Error("Missing MISTRAL_API_KEY");
-  return new ChatMistralAI({
+function getModel(modelId?: string) {
+  const apiKey = getOpenRouterApiKey();
+  return new ChatOpenAI({
     apiKey,
-    model: "mistral-large-latest",
+    model: resolveModelId(modelId),
     temperature: 0.8,
+    configuration: getOpenRouterConfiguration(),
   });
 }
 
@@ -43,9 +48,14 @@ function coerceArrayJson(text: string): unknown {
 export async function POST(req: NextRequest) {
   try {
     const user = await requireAuthenticatedUser();
-    const body = (await req.json()) as { sessionId?: string; count?: number };
+    const body = (await req.json()) as {
+      sessionId?: string;
+      count?: number;
+      model?: string;
+    };
     const sessionId = body.sessionId;
     const count = Math.min(Math.max(body.count ?? 6, 1), 12);
+    const modelId = body.model;
     console.log("📣 /api/feed request", { sessionId, count });
 
     if (!sessionId) {
@@ -88,7 +98,7 @@ export async function POST(req: NextRequest) {
     const beginningKey =
       (beginning?.data as { key?: string } | undefined)?.key || "";
 
-    const model = getModel();
+    const model = getModel(modelId);
     const system = `You are a social media ghostwriter producing a compact feed that looks like Instagram/Facebook.
 Rules:
 - Write short, punchy posts (1-3 sentences) with occasional emoji; no hashtags.
@@ -98,7 +108,7 @@ Rules:
 - Output ONLY JSON: an array of objects with keys {author, content, hoursAgo, likes, comments, postType}.
 - hoursAgo: integer from 1..36 (randomish), likes/comments: realistic small integers.
 `;
-    const user = JSON.stringify({
+    const payload = JSON.stringify({
       count,
       world: worldLine,
       beginningKey,
@@ -116,7 +126,10 @@ Rules:
 
     const ai = await model.invoke([
       { role: "system", content: system },
-      { role: "user", content: `Generate ${count} posts. JSON only.\n${user}` },
+      {
+        role: "user",
+        content: `Generate ${count} posts. JSON only.\n${payload}`,
+      },
     ]);
     const text =
       typeof ai.content === "string"
@@ -134,7 +147,7 @@ Rules:
       "preview:",
       text.slice(0, 400)
     );
-      const parsed = coerceArrayJson(text) as unknown;
+    const parsed = coerceArrayJson(text) as unknown;
     if (!Array.isArray(parsed))
       throw new Error("Model did not return an array");
     console.log("✅ parsed array length", (parsed as unknown[]).length);

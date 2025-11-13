@@ -1,5 +1,8 @@
 "use client";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import { useDevSettings } from "@/contexts/DevSettingsContext";
 
 type FeedPost = {
   id: string;
@@ -12,6 +15,7 @@ type FeedPost = {
 };
 
 export default function SocialFeed({ sessionId }: { sessionId?: string }) {
+  const { modelId } = useDevSettings();
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,13 +27,16 @@ export default function SocialFeed({ sessionId }: { sessionId?: string }) {
       setLoading(true);
       setError(null);
       try {
-        console.log("🛰️ SocialFeed fetchMore", { initial, sessionId });
+        console.log("🛰️ SocialFeed fetchMore", { initial, sessionId, modelId });
         const res = await fetch("/api/feed", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, count: 6 }),
+          body: JSON.stringify({ sessionId, count: 6, model: modelId }),
         });
-        const data = (await res.json()) as { posts?: FeedPost[]; error?: string };
+        const data = (await res.json()) as {
+          posts?: FeedPost[];
+          error?: string;
+        };
         console.log("📥 SocialFeed response", res.status, data);
         if (!res.ok) throw new Error(data.error || "Request failed");
         const newPosts = data.posts;
@@ -43,7 +50,7 @@ export default function SocialFeed({ sessionId }: { sessionId?: string }) {
         setLoading(false);
       }
     },
-    [loading, sessionId]
+    [loading, sessionId, modelId]
   );
 
   useEffect(() => {
@@ -51,7 +58,7 @@ export default function SocialFeed({ sessionId }: { sessionId?: string }) {
     pageRef.current = 0;
     console.log("🔄 SocialFeed reset for session", sessionId);
     void fetchMore(true);
-  }, [sessionId, fetchMore]);
+  }, [sessionId, fetchMore, modelId]);
 
   const skeletons = useMemo(() => new Array(3).fill(0), []);
 
@@ -115,11 +122,11 @@ export default function SocialFeed({ sessionId }: { sessionId?: string }) {
           {error && <div className="p-4 text-sm text-red-300">{error}</div>}
 
           <div className="p-4">
-              <button
-                className="w-full border rounded px-4 py-3"
-                onClick={() => fetchMore(false)}
-                disabled={loading}
-              >
+            <button
+              className="w-full border rounded px-4 py-3"
+              onClick={() => fetchMore(false)}
+              disabled={loading}
+            >
               {loading ? "Loading..." : "Load more"}
             </button>
           </div>

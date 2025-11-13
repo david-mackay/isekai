@@ -1,6 +1,9 @@
 import type { BaseCard } from "./cards";
 
-export const DEFAULT_WORLD_CARD: Omit<BaseCard, "id" | "updatedAt"> = {
+export const DEFAULT_WORLD_CARD: Omit<
+  BaseCard,
+  "id" | "updatedAt" | "storyId"
+> = {
   type: "world",
   name: "Eirath Core Lore",
   description: "Immutable world foundations: races, cultures, cosmology.",
@@ -80,6 +83,9 @@ export const DEFAULT_WORLD_CARD: Omit<BaseCard, "id" | "updatedAt"> = {
   },
 };
 
-export const WORLDS: Record<string, Omit<BaseCard, "id" | "updatedAt">> = {
+export const WORLDS: Record<
+  string,
+  Omit<BaseCard, "id" | "updatedAt" | "storyId">
+> = {
   eirath: DEFAULT_WORLD_CARD,
 };

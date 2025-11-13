@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ChatOpenAI } from "@langchain/openai";
 import { upsertCard, type BaseCard } from "@/lib/cards";
 import { DEFAULT_WORLD_CARD, WORLDS } from "@/lib/world";
 import { requireAuthenticatedUser } from "@/server/auth/session";
 import { assertStoryOwnership } from "@/server/services/stories";
+import { recordMemory } from "@/server/services/memories";
+import {
+  getOpenRouterApiKey,
+  getOpenRouterConfiguration,
+} from "@/lib/openrouter";
+import { resolveModelId } from "@/lib/modelOptions";
 
 const beginnings = {
   combat: {
@@ -96,6 +103,107 @@ const beginnings = {
 
 type BeginningKey = keyof typeof beginnings;
 
+function extractMessageContent(content: unknown): string {
+  if (typeof content === "string") {
+    return content.trim();
+  }
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => {
+        if (typeof part === "string") {
+          return part;
+        }
+        if (
+          part &&
+          typeof part === "object" &&
+          "text" in part &&
+          typeof (part as { text?: unknown }).text === "string"
+        ) {
+          return ((part as { text: string }).text ?? "").toString();
+        }
+        return "";
+      })
+      .join("")
+      .trim();
+  }
+  if (
+    content &&
+    typeof content === "object" &&
+    "text" in content &&
+    typeof (content as { text?: unknown }).text === "string"
+  ) {
+    return ((content as { text: string }).text ?? "").trim();
+  }
+  return "";
+}
+
+async function generateBackstorySummary(
+  playerName: string,
+  backstory: string
+): Promise<string> {
+  const trimmed = backstory.trim();
+  if (!trimmed) {
+    return "";
+  }
+  try {
+    const llm = new ChatOpenAI({
+      apiKey: getOpenRouterApiKey(),
+      model: resolveModelId("openai/gpt-4o-mini"),
+      temperature: 0.6,
+      configuration: getOpenRouterConfiguration(),
+    });
+    const ai = await llm.invoke([
+      {
+        role: "system",
+        content:
+          "You are a narrative designer for a fantasy RPG. Rewrite the given player-provided backstory as a single evocative sentence in third person that captures their motivation, tone, or defining hook. Avoid second-person language and meta commentary.",
+      },
+      {
+        role: "user",
+        content: `Player character: ${playerName}\nBackstory:\n${trimmed}\n\nRespond with one polished sentence.`,
+      },
+    ]);
+    const summary = extractMessageContent(ai.content);
+    return summary || `${playerName}'s origins: ${trimmed}`;
+  } catch (error) {
+    console.warn("⚠️ Failed to generate backstory summary:", error);
+    return `${playerName}'s origins: ${trimmed}`;
+  }
+}
+
+async function createInitialBackstoryMemory(options: {
+  storyId: string;
+  playerCardId: string;
+  playerName: string;
+  backstory: string;
+}) {
+  const trimmed = options.backstory.trim();
+  if (!trimmed) return;
+  const summary = await generateBackstorySummary(options.playerName, trimmed);
+  await recordMemory({
+    storyId: options.storyId,
+    summary,
+    sourceType: "player",
+    ownerCardId: options.playerCardId,
+    subjectCardId: options.playerCardId,
+    tags: ["backstory", "origin"],
+    importance: 4,
+    context: {
+      initialBackstory: trimmed,
+    },
+  });
+  await upsertCard(
+    {
+      type: "character",
+      name: "Player Character",
+      data: {
+        initialBackstorySummary: summary,
+      },
+    },
+    options.storyId
+  );
+}
+
 export async function POST(req: NextRequest) {
   try {
     const user = await requireAuthenticatedUser();
@@ -107,6 +215,7 @@ export async function POST(req: NextRequest) {
           name: string;
           gender: string;
           race: string;
+          backstory?: string;
         };
         worldKey?: string;
       };
@@ -117,10 +226,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!sessionId) {
-      return NextResponse.json(
-        { error: "Missing sessionId" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing sessionId" }, { status: 400 });
     }
 
     try {
@@ -146,7 +252,10 @@ export async function POST(req: NextRequest) {
 
     // Ensure a 'world' card with immutable traits exists (idempotent upsert)
     const world = (worldKey && WORLDS[worldKey]) || DEFAULT_WORLD_CARD;
-    await upsertCard(world as Omit<BaseCard, "id" | "updatedAt" | "storyId">, sessionId);
+    await upsertCard(
+      world as Omit<BaseCard, "id" | "updatedAt" | "storyId">,
+      sessionId
+    );
 
     // Create player character card if character data is provided
     if (playerCharacter) {
@@ -154,7 +263,10 @@ export async function POST(req: NextRequest) {
         "👤 API: Creating player character card:",
         playerCharacter.name
       );
-      await upsertCard(
+      const initialBackstory = playerCharacter.backstory
+        ? playerCharacter.backstory.trim()
+        : "";
+      const playerCard = await upsertCard(
         {
           type: "character",
           name: "Player Character",
@@ -163,6 +275,7 @@ export async function POST(req: NextRequest) {
             name: playerCharacter.name,
             gender: playerCharacter.gender,
             race: playerCharacter.race,
+            ...(initialBackstory ? { initialBackstory } : {}),
             backstory: {},
             revealedTraits: [],
             isPlayerCharacter: true,
@@ -170,6 +283,17 @@ export async function POST(req: NextRequest) {
         },
         sessionId
       );
+      if (
+        initialBackstory &&
+        !(playerCard.data as Record<string, unknown>)?.initialBackstorySummary
+      ) {
+        await createInitialBackstoryMemory({
+          storyId: sessionId,
+          playerCardId: playerCard.id,
+          playerName: playerCharacter.name,
+          backstory: initialBackstory,
+        });
+      }
     }
 
     // Persist the selected beginning as its own entity for the session

@@ -32,6 +32,21 @@ export default function StartPanel({
       ) : (
         <div className="space-y-3">
           <h2 className="text-xl font-semibold">Choose a beginning</h2>
+          <div className="border border-gray-700 rounded px-3 py-2 text-sm bg-black/20">
+            <div className="font-medium text-gray-200">
+              {character.name} — {character.gender}, {character.race}
+            </div>
+            {character.backstory?.trim() ? (
+              <p className="mt-2 text-gray-400 whitespace-pre-line">
+                {character.backstory.trim()}
+              </p>
+            ) : (
+              <p className="mt-2 text-gray-500">
+                No backstory provided yet. You can flesh it out through play or
+                update it later using the backstory tool.
+              </p>
+            )}
+          </div>
           <div className="mb-2">
             <label className="block text-sm mb-1">World</label>
             <select
@@ -46,12 +61,12 @@ export default function StartPanel({
               ))}
             </select>
           </div>
-            <BeginningsPicker
-              playerCharacter={character}
-              onSelectWithoutCharacter={() => onCharacterRequest()}
-              onSeeded={onSeeded}
-              isLoadingStory={isLoadingStory}
-            />
+          <BeginningsPicker
+            playerCharacter={character}
+            onSelectWithoutCharacter={() => onCharacterRequest()}
+            onSeeded={onSeeded}
+            isLoadingStory={isLoadingStory}
+          />
         </div>
       )}
     </div>

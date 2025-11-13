@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
       text?: string;
       sessionId?: string;
       targetCharacter?: string;
+      model?: string;
     };
     console.log("🎮 API: Received DM request:", body);
 
@@ -20,10 +21,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!body.sessionId) {
-      return NextResponse.json(
-        { error: "Missing sessionId" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing sessionId" }, { status: 400 });
     }
 
     try {
@@ -52,7 +50,12 @@ export async function POST(req: NextRequest) {
         : { kind: "do", text: body.text! };
 
     console.log("🎲 API: Running turn with action:", action);
-    const result = await runTurn(action, body.sessionId, body.targetCharacter);
+    const result = await runTurn(
+      action,
+      body.sessionId,
+      body.targetCharacter,
+      body.model
+    );
     console.log("✅ API: Turn completed successfully");
 
     return NextResponse.json({ content: result });

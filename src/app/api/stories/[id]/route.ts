@@ -19,16 +19,13 @@ function toSummary(story: Awaited<ReturnType<typeof assertStoryOwnership>>) {
   };
 }
 
-type ParamsContext = { params: { id: string } | Promise<{ id: string }> };
-
-async function resolveParams(context: ParamsContext): Promise<{ id: string }> {
-  return Promise.resolve(context.params);
-}
-
-export async function GET(_req: NextRequest, context: ParamsContext) {
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const user = await requireAuthenticatedUser();
-    const { id } = await resolveParams(context);
+    const { id } = await params;
     const story = await assertStoryOwnership(user.id, id);
     return NextResponse.json({ story: toSummary(story) });
   } catch (error) {
@@ -47,10 +44,13 @@ export async function GET(_req: NextRequest, context: ParamsContext) {
   }
 }
 
-export async function DELETE(_req: NextRequest, context: ParamsContext) {
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const user = await requireAuthenticatedUser();
-    const { id } = await resolveParams(context);
+    const { id } = await params;
     await assertStoryOwnership(user.id, id);
     await deleteStory(user.id, id);
     return NextResponse.json({ ok: true });

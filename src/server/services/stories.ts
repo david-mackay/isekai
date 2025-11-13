@@ -165,8 +165,32 @@ export async function addStoryMessage(
 }
 
 export async function getStoryMessages(
-  storyId: string
+  storyId: string,
+  options?: { limit?: number }
 ): Promise<StoryMessageDTO[]> {
+  const limit =
+    options?.limit && options.limit > 0 ? Math.floor(options.limit) : undefined;
+
+  if (limit) {
+    const rows = await db
+      .select()
+      .from(storyMessages)
+      .where(eq(storyMessages.storyId, storyId))
+      .orderBy(desc(storyMessages.sequence))
+      .limit(limit);
+
+    return rows
+      .slice()
+      .reverse()
+      .map((row) => ({
+        id: row.id,
+        role: row.role,
+        content: row.content,
+        sequence: row.sequence,
+        createdAt: row.createdAt.toISOString(),
+      }));
+  }
+
   const rows = await db
     .select()
     .from(storyMessages)

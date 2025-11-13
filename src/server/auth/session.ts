@@ -54,12 +54,14 @@ export function clearSessionCookie(response: NextResponse) {
 }
 
 function isSessionPayload(value: unknown): value is SessionPayload {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const payload = value as Record<string, unknown>;
   return (
-    typeof value === "object" &&
-    value !== null &&
-    typeof (value as any).sub === "string" &&
-    typeof (value as any).walletAddress === "string" &&
-    typeof (value as any).exp === "number"
+    typeof payload.sub === "string" &&
+    typeof payload.walletAddress === "string" &&
+    typeof payload.exp === "number"
   );
 }
 
