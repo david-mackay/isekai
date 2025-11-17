@@ -6,14 +6,19 @@ export type ModelOption = {
 
 export const MODEL_OPTIONS: ModelOption[] = [
   {
-    id: "openai/gpt-4o",
-    label: "GPT-4o",
-    description: "Flagship OpenAI model via OpenRouter",
+    id: "deepseek/deepseek-chat-v3-0324",
+    label: "DeepSeek Chat V3 0324",
+    description: "DeepSeek's latest model (RolePlay #1)",
   },
   {
-    id: "openai/gpt-4o-mini",
-    label: "GPT-4o Mini",
-    description: "Faster, lower-cost GPT-4o variant",
+    id: "mistralai/mistral-nemo:free",
+    label: "Mistral Nemo Free",
+    description: "Mistral's free model (RolePlay #3)",
+  },
+  {
+    id: "mistralai/mistral-nemo",
+    label: "Mistral Nemo",
+    description: "Roleplay Cheapest Model",
   },
   {
     id: "anthropic/claude-3.5-sonnet",
@@ -32,7 +37,7 @@ export const MODEL_OPTIONS: ModelOption[] = [
   },
 ];
 
-export const DEFAULT_MODEL_ID = "x-ai/grok-4-fast";
+export const DEFAULT_MODEL_ID = "mistralai/mistral-nemo:free";
 
 export function resolveModelId(candidate?: string): string {
   if (!candidate) return DEFAULT_MODEL_ID;
