@@ -78,6 +78,8 @@ export default function StoryChatPage() {
   const [activeTab, setActiveTab] = useState<"chat" | "social" | "characters">(
     "chat"
   );
+  const [optionsMenuOpen, setOptionsMenuOpen] = useState(false);
+  const [isDevAuthenticated, setIsDevAuthenticated] = useState(false);
 
   const storyItems = useMemo(
     () => mapStoriesToListItems(stories, storyBeginnings),
@@ -110,6 +112,53 @@ export default function StoryChatPage() {
     window.addEventListener("resize", detect);
     return () => window.removeEventListener("resize", detect);
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = window.sessionStorage.getItem("isekai:devAuth");
+      setIsDevAuthenticated(stored === "true");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!optionsMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-options-menu]')) {
+        setOptionsMenuOpen(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [optionsMenuOpen]);
+
+  const handleOptionsClick = async () => {
+    if (!isDevAuthenticated) {
+      const password = prompt("Enter dev password to access options:");
+      if (!password) return;
+      try {
+        const res = await fetch("/api/dev/password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password }),
+        });
+        const data = (await res.json()) as { success?: boolean };
+        if (res.ok && data.success) {
+          setIsDevAuthenticated(true);
+          if (typeof window !== "undefined") {
+            window.sessionStorage.setItem("isekai:devAuth", "true");
+          }
+          setOptionsMenuOpen(true);
+        } else {
+          alert("Invalid password");
+        }
+      } catch {
+        alert("Failed to verify password");
+      }
+    } else {
+      setOptionsMenuOpen(!optionsMenuOpen);
+    }
+  };
 
   const fetchStories = useCallback(async () => {
     if (walletAuth.status !== "authenticated") {
@@ -507,7 +556,7 @@ export default function StoryChatPage() {
           </div>
         </header>
 
-        <div className="px-2 md:px-6 pt-2 border-b">
+        <div className="px-2 md:px-6 pt-2 border-b flex items-center justify-between relative">
           <div className="flex gap-2">
             <button
               className={`px-3 py-2 text-sm rounded border ${
@@ -517,34 +566,83 @@ export default function StoryChatPage() {
             >
               Chat
             </button>
-            <button
-              className={`px-3 py-2 text-sm rounded border ${
-                activeTab === "social" ? "bg-white/10" : "bg-transparent"
-              }`}
-              onClick={() => setActiveTab("social")}
-            >
-              Social
-            </button>
-            <button
-              className={`px-3 py-2 text-sm rounded border ${
-                activeTab === "characters" ? "bg-white/10" : "bg-transparent"
-              }`}
-              onClick={() => setActiveTab("characters")}
-            >
-              Characters
-            </button>
+            {isDevAuthenticated && (
+              <>
+                <button
+                  className={`px-3 py-2 text-sm rounded border ${
+                    activeTab === "social" ? "bg-white/10" : "bg-transparent"
+                  }`}
+                  onClick={() => setActiveTab("social")}
+                >
+                  Social
+                </button>
+                <button
+                  className={`px-3 py-2 text-sm rounded border ${
+                    activeTab === "characters" ? "bg-white/10" : "bg-transparent"
+                  }`}
+                  onClick={() => setActiveTab("characters")}
+                >
+                  Characters
+                </button>
+              </>
+            )}
+          </div>
+          <div className="relative" data-options-menu>
+            {!isDevAuthenticated && (
+              <button
+                className="px-2 py-1.5 text-xs rounded border opacity-60 hover:opacity-100"
+                onClick={handleOptionsClick}
+                title="Dev options"
+              >
+                ⋯
+              </button>
+            )}
+            {isDevAuthenticated && (
+              <button
+                className="px-2 py-1.5 text-xs rounded border opacity-60 hover:opacity-100"
+                onClick={() => setOptionsMenuOpen(!optionsMenuOpen)}
+                title="Options"
+              >
+                ⋯
+              </button>
+            )}
+            {isDevAuthenticated && optionsMenuOpen && (
+              <div className="absolute right-0 top-8 bg-[var(--color-surface)] border rounded shadow-lg p-2 z-50 min-w-[120px]">
+                <button
+                  className={`w-full px-3 py-2 text-sm rounded border mb-1 ${
+                    activeTab === "social" ? "bg-white/10" : "bg-transparent"
+                  }`}
+                  onClick={() => {
+                    setActiveTab("social");
+                    setOptionsMenuOpen(false);
+                  }}
+                >
+                  Social
+                </button>
+                <button
+                  className={`w-full px-3 py-2 text-sm rounded border ${
+                    activeTab === "characters" ? "bg-white/10" : "bg-transparent"
+                  }`}
+                  onClick={() => {
+                    setActiveTab("characters");
+                    setOptionsMenuOpen(false);
+                  }}
+                >
+                  Characters
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
         <main className="flex-1 p-2 md:p-6 flex flex-col">
           {activeTab === "chat" ? (
             <>
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+              <div className={`grid grid-cols-1 ${isMobile ? "" : "lg:grid-cols-4"} gap-4 flex-1`}>
                 <div
                   className={`${
                     isMobile ? "order-1" : "order-2 lg:order-1"
-                  } lg:col-span-3 w-full mx-auto`}
-                  style={{ maxWidth: isMobile ? 360 : undefined }}
+                  } ${isMobile ? "" : "lg:col-span-3"} w-full`}
                 >
                   <ChatWindow
                     messages={messages}
@@ -552,32 +650,27 @@ export default function StoryChatPage() {
                     onSuggest={(text) => setInput(text)}
                   />
                 </div>
-                <div
-                  className={`${
-                    isMobile ? "order-2" : "order-1 lg:order-2"
-                  } lg:col-span-1 w-full mx-auto`}
-                  style={{ maxWidth: isMobile ? 360 : undefined }}
-                >
-                  <CharacterSheet sessionId={storyId} />
-                </div>
+                {!isMobile && (
+                  <div
+                    className="order-1 lg:order-2 lg:col-span-1 w-full"
+                  >
+                    <CharacterSheet sessionId={storyId} />
+                  </div>
+                )}
               </div>
-              <div className="mt-4 sticky bottom-0 bg-[var(--color-background)]/80 backdrop-blur supports-[backdrop-filter]:bg-[var(--color-background)]/60 p-2">
-                <div
-                  className="w-full mx-auto"
-                  style={{ maxWidth: isMobile ? 360 : undefined }}
-                >
-                  <ControlBar
-                    input={input}
-                    setInput={setInput}
-                    loading={loading}
-                    onSay={() => send("say")}
-                    onDo={() => send("do")}
-                    onContinue={() => send("continue")}
-                    onExamine={sendExamine}
-                    auto={auto}
-                    setAuto={setAuto}
-                  />
-                </div>
+              <div className="mt-2 sticky bottom-0 bg-[var(--color-background)]/80 backdrop-blur supports-[backdrop-filter]:bg-[var(--color-background)]/60 p-2">
+                <ControlBar
+                  input={input}
+                  setInput={setInput}
+                  loading={loading}
+                  onSay={() => send("say")}
+                  onDo={() => send("do")}
+                  onContinue={() => send("continue")}
+                  onExamine={sendExamine}
+                  auto={auto}
+                  setAuto={setAuto}
+                  isMobile={isMobile}
+                />
               </div>
             </>
           ) : activeTab === "social" ? (

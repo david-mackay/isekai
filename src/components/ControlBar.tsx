@@ -11,6 +11,7 @@ export default function ControlBar({
   onExamine,
   auto,
   setAuto,
+  isMobile = false,
 }: {
   input: string;
   setInput: (v: string) => void;
@@ -21,54 +22,66 @@ export default function ControlBar({
   onExamine: () => void;
   auto: boolean;
   setAuto: (v: boolean) => void;
+  isMobile?: boolean;
 }) {
   return (
-    <div className="mt-4 flex flex-col gap-3">
+    <div className="flex flex-col gap-2">
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
         <input
-          className="w-full sm:flex-1 border rounded px-3 py-3 bg-transparent text-base"
+          className={`w-full sm:flex-1 border rounded bg-transparent ${
+            isMobile ? "px-2 py-2 text-sm" : "px-3 py-3 text-base"
+          }`}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type your action or dialogue..."
           disabled={loading}
         />
-        <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:grid-cols-4 sm:gap-2">
+        <div className={`grid grid-cols-2 w-full sm:w-auto sm:grid-cols-4 ${isMobile ? "gap-1" : "gap-1.5 sm:gap-2"}`}>
           <button
-            className="border rounded px-4 py-3 text-base w-full"
+            className={`border rounded w-full ${
+              isMobile ? "px-2 py-1.5 text-xs" : "px-4 py-3 text-base"
+            }`}
             onClick={onSay}
             disabled={loading}
           >
             {loading ? <LoadingDots /> : "Say"}
           </button>
           <button
-            className="border rounded px-4 py-3 text-base w-full"
+            className={`border rounded w-full ${
+              isMobile ? "px-2 py-1.5 text-xs" : "px-4 py-3 text-base"
+            }`}
             onClick={onDo}
             disabled={loading}
           >
             {loading ? <LoadingDots /> : "Do"}
           </button>
           <button
-            className="border rounded px-4 py-3 text-base w-full"
+            className={`border rounded w-full ${
+              isMobile ? "px-2 py-1.5 text-xs" : "px-4 py-3 text-base"
+            }`}
             onClick={onExamine}
             disabled={loading}
             title="Examine a target (uses the input as target if provided)"
           >
-            Examine
+            {isMobile ? "Ex" : "Examine"}
           </button>
           <button
-            className="border rounded px-4 py-3 text-base w-full"
+            className={`border rounded w-full ${
+              isMobile ? "px-2 py-1.5 text-xs" : "px-4 py-3 text-base"
+            }`}
             onClick={onContinue}
             disabled={loading}
           >
-            {loading ? <LoadingDots /> : "Continue"}
+            {loading ? <LoadingDots /> : isMobile ? "→" : "Continue"}
           </button>
         </div>
       </div>
-      <label className="flex items-center gap-2 text-sm opacity-80">
+      <label className={`flex items-center gap-2 opacity-80 ${isMobile ? "text-xs" : "text-sm"}`}>
         <input
           type="checkbox"
           checked={auto}
           onChange={(e) => setAuto(e.target.checked)}
+          className={isMobile ? "scale-75" : ""}
         />
         Auto-continue after DM responses
       </label>

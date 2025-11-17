@@ -72,55 +72,96 @@ export default function ChatWindow({
   return (
     <div
       ref={scrollerRef}
-      className="border rounded p-4 h-[70vh] md:h-[60vh] overflow-y-auto bg-white/5"
+      className="border rounded p-4 overflow-y-auto bg-white/5"
+      style={{ height: "calc(100vh - 280px)" }}
     >
       {rendered.length === 0 ? (
         <p className="opacity-70">Press Continue to begin, or Say/Do to act.</p>
       ) : (
         <div className="space-y-3">
-          {rendered.map((m, i) => (
-            <div key={i} className={m.role === "dm" ? "" : "text-emerald-300"}>
-              <span className="font-mono text-xs mr-2 opacity-60">
-                {m.role === "dm" ? "DM" : "You"}
-              </span>
-              <div className="inline prose prose-invert prose-sm max-w-none">
-                <ReactMarkdown
-                  components={{
-                    p: ({ children }) => <span>{children}</span>,
-                    strong: ({ children }) => {
-                      const text = Array.isArray(children)
-                        ? children.join("")
-                        : String(children ?? "");
-                      const clickable =
-                        m.role === "dm" &&
-                        onSuggest &&
-                        text.length > 0 &&
-                        text.length <= 80;
-                      return clickable ? (
-                        <button
-                          type="button"
-                          onClick={() => onSuggest?.(text)}
-                          className="font-bold text-yellow-300 underline decoration-dotted hover:decoration-solid cursor-pointer"
-                          title="Click to use this as your action"
-                        >
-                          {children}
-                        </button>
-                      ) : (
-                        <strong className="font-bold text-yellow-300">
-                          {children}
-                        </strong>
-                      );
-                    },
-                    em: ({ children }) => (
-                      <em className="italic text-blue-300">{children}</em>
-                    ),
-                  }}
-                >
-                  {m.content}
-                </ReactMarkdown>
+          {rendered.map((m, i) => {
+            const isPlayer = m.role === "you";
+            const isSystemLike =
+              m.role === "dm" &&
+              /^\s*(?:【\s*SYSTEM\s*】|\[\s*SYSTEM\s*]|SYSTEM:)/i.test(
+                m.content
+              );
+
+            const containerClass = isSystemLike
+              ? "flex justify-center"
+              : isPlayer
+              ? "flex justify-end"
+              : "flex justify-start";
+
+            const bubbleBase =
+              "inline-block rounded-2xl px-3 py-2 max-w-[min(40rem,90%)] shadow-sm";
+
+            const bubbleClass = isSystemLike
+              ? `${bubbleBase} bg-indigo-950/80 border border-indigo-500/60 text-indigo-100 font-mono text-xs tracking-wide`
+              : isPlayer
+              ? `${bubbleBase} bg-emerald-500/10 border border-emerald-400/60 text-emerald-50`
+              : `${bubbleBase} bg-slate-900/70 border border-slate-600/70 text-slate-50`;
+
+            const label =
+              m.role === "you" ? "You" : isSystemLike ? "SYSTEM" : "DM";
+
+            const labelClass = isSystemLike
+              ? "text-indigo-300"
+              : isPlayer
+              ? "text-emerald-300"
+              : "text-slate-400";
+
+            return (
+              <div key={i} className={containerClass}>
+                <div className={bubbleClass}>
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span
+                      className={`font-mono text-xs opacity-70 ${labelClass}`}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                  <div className="prose prose-invert prose-sm max-w-none">
+                    <ReactMarkdown
+                      components={{
+                        p: ({ children }) => <span>{children}</span>,
+                        strong: ({ children }) => {
+                          const text = Array.isArray(children)
+                            ? children.join("")
+                            : String(children ?? "");
+                          const clickable =
+                            m.role === "dm" &&
+                            !isSystemLike &&
+                            onSuggest &&
+                            text.length > 0 &&
+                            text.length <= 80;
+                          return clickable ? (
+                            <button
+                              type="button"
+                              onClick={() => onSuggest?.(text)}
+                              className="font-bold text-yellow-300 underline decoration-dotted hover:decoration-solid cursor-pointer"
+                              title="Click to use this as your action"
+                            >
+                              {children}
+                            </button>
+                          ) : (
+                            <strong className="font-bold text-yellow-300">
+                              {children}
+                            </strong>
+                          );
+                        },
+                        em: ({ children }) => (
+                          <em className="italic text-blue-300">{children}</em>
+                        ),
+                      }}
+                    >
+                      {m.content}
+                    </ReactMarkdown>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {(loading || animating) && (
             <div className="flex items-center gap-2 text-sm opacity-70">
               <span className="font-mono text-xs">DM</span>

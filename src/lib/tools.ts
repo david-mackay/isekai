@@ -80,7 +80,8 @@ export const updateOrCreateCard = tool(
       name: z.string(),
       description: z.string().optional().nullable(),
       data: z.record(z.string(), z.unknown()).optional().nullable(),
-      sessionId: z.string().uuid().optional().nullable(),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
     }),
   }
 );
@@ -107,7 +108,8 @@ export const listAllCards = tool(
     schema: z.object({
       type: z.string().optional().nullable(),
       name: z.string().optional().nullable(),
-      sessionId: z.string().uuid().optional().nullable(),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
     }),
   }
 );
@@ -176,7 +178,8 @@ export const recordMemoryTool = tool(
     description:
       "Archive a meaningful in-world memory when a character (player or NPC) learns, experiences, or commits to something significant. Use this to preserve facts for future recall.",
     schema: z.object({
-      sessionId: z.string().uuid().optional().nullable(),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
       summary: z
         .string()
         .min(1)
@@ -190,14 +193,14 @@ export const recordMemoryTool = tool(
         .describe(
           "Who is recording the memory. Defaults to 'system' if omitted."
         ),
-      ownerCardId: z.string().uuid().optional().nullable(),
+      ownerCardId: z.string().optional().nullable(),
       ownerCardName: z.string().optional().nullable(),
       ownerCardType: z
         .enum(CARD_TYPES)
         .optional()
         .nullable()
         .describe("Card type for owner lookup when using a name."),
-      subjectCardId: z.string().uuid().optional().nullable(),
+      subjectCardId: z.string().optional().nullable(),
       subjectCardName: z.string().optional().nullable(),
       subjectCardType: z
         .enum(CARD_TYPES)
@@ -270,8 +273,9 @@ export const upsertCharacterStatTool = tool(
     description:
       "Record or update structured facts about a character (abilities, conditions, resources, etc.). Use after noteworthy changes.",
     schema: z.object({
-      sessionId: z.string().uuid().optional().nullable(),
-      characterId: z.string().uuid().optional().nullable(),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
+      characterId: z.string().optional().nullable(),
       characterName: z.string().optional().nullable(),
       characterType: z.enum(CARD_TYPES).optional().nullable(),
       key: z
@@ -314,10 +318,13 @@ export const updateRelationshipTool = tool(
     metrics?: Record<string, unknown> | null;
     importance?: number | null;
   }) => {
-    if (!payload.sessionId) {
-      throw new Error("sessionId is required to update relationships.");
-    }
+    // sessionId is always injected by the agent from context
     const sessionId = payload.sessionId;
+    if (!sessionId) {
+      throw new Error(
+        "sessionId is required to update relationships. This should never happen - it's injected automatically."
+      );
+    }
     const sourceCardId = await resolveCardId(sessionId, {
       id: payload.sourceId,
       name: payload.sourceName,
@@ -365,11 +372,12 @@ export const updateRelationshipTool = tool(
     description:
       "Track how two characters feel about each other—trust shifts, rivalries, alliances, etc. Use after meaningful interactions.",
     schema: z.object({
-      sessionId: z.string().uuid().optional().nullable(),
-      sourceId: z.string().uuid().optional().nullable(),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
+      sourceId: z.string().optional().nullable(),
       sourceName: z.string().optional().nullable(),
       sourceType: z.enum(CARD_TYPES).optional().nullable(),
-      targetId: z.string().uuid().optional().nullable(),
+      targetId: z.string().optional().nullable(),
       targetName: z.string().optional().nullable(),
       targetType: z.enum(CARD_TYPES).optional().nullable(),
       summary: z.string().optional().nullable(),
@@ -409,7 +417,8 @@ export const summarizeStoryTool = tool(
     description:
       "Condense lengthy transcripts into a durable campaign summary. Optionally attach new memories and refresh character sheets when the log grows unwieldy.",
     schema: StorySummaryPayloadSchema.extend({
-      sessionId: z.string().uuid().optional().nullable(),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
     }),
   }
 );
@@ -525,7 +534,8 @@ export const updatePlayerBackstory = tool(
         .describe(
           "A detailed description of how this was revealed and what it means"
         ),
-      sessionId: z.string().uuid().optional().nullable(),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
     }),
   }
 );

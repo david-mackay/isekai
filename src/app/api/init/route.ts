@@ -15,20 +15,37 @@ const beginnings = {
   combat: {
     title: "Crucible of Steel",
     description:
-      "Steel flashes, stakes are high—your first step lands in a fight.",
+      "Steel flashes and divine intent hangs in the air. You arrive mid-conflict, already bound to a fate someone else set in motion, with instincts that feel half-remembered from another life.",
     seed: {
       story: [
         {
           type: "story",
           name: "Conflict Zone",
-          description: "Tensions primed for violence.",
-          data: { hooks: ["ambush at dawn", "beast on the loose"] },
+          description:
+            "A borderland where skirmishes blur into holy war and grudges span generations. Something here has been waiting specifically for you.",
+          data: {
+            hooks: [
+              "ambush at dawn",
+              "beast on the loose",
+              "mysterious patron watching",
+            ],
+            omens: [
+              "cold iron humming near you",
+              "unfamiliar sigil burning behind your eyes",
+            ],
+            systemTags: ["combat_tutorial", "blessing_lock"],
+          },
         },
         {
           type: "environment",
           name: "Battleground",
-          description: "Constrained terrain with hazards.",
-          data: { features: ["cover", "elevation", "flammables"] },
+          description:
+            "Constrained terrain littered with fallen standards, shattered wards, and half-buried relics that react faintly to your presence.",
+          data: {
+            features: ["cover", "elevation", "flammables"],
+            hazards: ["unstable ward-glyphs", "stray projectiles"],
+            lore: ["old dueling grounds repurposed for a secret war"],
+          },
         },
       ],
     },
@@ -36,20 +53,36 @@ const beginnings = {
   romance: {
     title: "Academy of Hearts",
     description:
-      "Whispers, duels, and stolen glances at a prestigious academy.",
+      "Whispers coil through marble halls where duels and declarations share the same stage. You surface into a life already enrolled, with relationships, rumors, and expectations you never agreed to.",
     seed: {
       story: [
         {
           type: "story",
           name: "Moonspire Academy",
-          description: "Scholars, duels, and dances.",
-          data: { hooks: ["forbidden club", "faculty intrigue"] },
+          description:
+            "An elite academy where magic, swordplay, and politics are graded together—and some faculty seem to recognize you from a destiny you don't remember choosing.",
+          data: {
+            hooks: [
+              "forbidden club",
+              "faculty intrigue",
+              "mismatched dorm assignment",
+            ],
+            socialWeb: [
+              "childhood friend who remembers you",
+              "rival who insists you wronged them",
+            ],
+            systemTags: ["social_tutorial", "favor_reputation"],
+          },
         },
         {
           type: "environment",
           name: "Grand Quadrangle",
-          description: "Dorms and lecture halls converge.",
-          data: { events: ["masquerade", "exams week"] },
+          description:
+            "Dorms, lecture halls, and dueling circles converge beneath floating lanterns and watchful gargoyles that track every promise you make.",
+          data: {
+            events: ["masquerade", "exams week", "dueling festival"],
+            secrets: ["sealed garden only opens for summoned souls"],
+          },
         },
       ],
     },
@@ -57,44 +90,70 @@ const beginnings = {
   politics: {
     title: "Crown and Shadow",
     description:
-      "Courts and war rooms where a single choice can tip a kingdom.",
+      "Courts, war rooms, and back alleys where a single choice can tilt kingdoms. You step into a role someone else abandoned—a mask, a title, or a body with oaths already attached.",
     seed: {
       story: [
         {
           type: "story",
           name: "Border Marches",
-          description: "Two blocs contest a vital route.",
+          description:
+            "Two rival blocs contest a vital trade route that also hides the scars of older, stranger wars. Your arrival quietly completes a pattern in their prophecies.",
           data: {
             factions: ["Guild Compact", "Wardens' League"],
-            hooks: ["grain shortage", "sabotaged envoy"],
+            hooks: [
+              "grain shortage",
+              "sabotaged envoy",
+              "missing royal 'you' replaced",
+            ],
+            systemTags: ["reputation_matrix", "hidden_alignment"],
           },
         },
         {
           type: "environment",
           name: "Council Hall",
-          description: "Marble, banners, and tense guard lines.",
-          data: { protocols: ["immunity", "oath-binding"] },
+          description:
+            "Marble, banners, and tense guard lines etched with oaths that flare at lies. Somewhere in the architecture, a sigil reacts only to your presence.",
+          data: {
+            protocols: ["immunity", "oath-binding"],
+            factionsPresent: ["royal envoys", "shadow emissaries"],
+            lore: ["council chamber built atop an older summoning circle"],
+          },
         },
       ],
     },
   },
   exploration: {
     title: "Chart the Unknown",
-    description: "Salt wind, secret maps, and the pull of uncharted horizons.",
+    description:
+      "Salt wind, secret maps, and the pull of uncharted horizons. You awaken mid-voyage with the uncanny sense that the sea already knows you—and is keeping score.",
     seed: {
       story: [
         {
           type: "story",
           name: "Sable Gull (Cutter)",
           description:
-            "Pirate/privateer cutter bound for the Shattered Shoals.",
-          data: { hooks: ["mutiny brewing", "map fragment"] },
+            "A fast, battle-scarred cutter bound for the Shattered Shoals, crewed by people who swear they've seen you in dreams or omens before.",
+          data: {
+            hooks: [
+              "mutiny brewing",
+              "map fragment",
+              "crew superstition about you",
+            ],
+            systemTags: ["exploration_track", "hidden_class_unlock"],
+          },
         },
         {
           type: "environment",
           name: "Stormdeck",
-          description: "Slick planks, roaring sail, and watchful eyes.",
-          data: { hazards: ["rigging", "squalls"] },
+          description:
+            "Slick planks, roaring sail, watchful eyes—and storm-sigils burned into the mast that pulse faintly when you grip the railing.",
+          data: {
+            hazards: ["rigging", "squalls", "rogue wave"],
+            omens: [
+              "distant bell only you hear",
+              "constellation that shifts when you look away",
+            ],
+          },
         },
       ],
     },
