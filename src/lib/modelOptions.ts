@@ -37,7 +37,7 @@ export const MODEL_OPTIONS: ModelOption[] = [
   },
 ];
 
-export const DEFAULT_MODEL_ID = "mistralai/mistral-nemo";
+export const DEFAULT_MODEL_ID = "x-ai/grok-4-fast";
 
 export function resolveModelId(candidate?: string): string {
   if (!candidate) return DEFAULT_MODEL_ID;
