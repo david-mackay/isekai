@@ -40,7 +40,7 @@ export default function AuthPage() {
 
         <p className="text-sm text-gray-400 text-left">
           Connect your Solana wallet to resume your adventures. Once signed in,
-          we'll drop you straight into your story list.
+          we&apos;ll drop you straight into your story list.
         </p>
 
         {walletAuth.error && (
