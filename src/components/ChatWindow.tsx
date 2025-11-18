@@ -143,6 +143,7 @@ export default function ChatWindow({
                     <ReactMarkdown
                       components={{
                         p: ({ children }) => <span>{children}</span>,
+                        img: () => null, // Disable image rendering in markdown since we render images separately
                         strong: ({ children }) => {
                           const text = Array.isArray(children)
                             ? children.join("")
