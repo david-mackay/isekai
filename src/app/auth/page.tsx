@@ -11,7 +11,7 @@ export default function AuthPage() {
   const router = useRouter();
   const walletAuth = useWalletAuth();
   const { open } = useAppKit();
-  const { isConnected, address } = useAppKitAccount();
+  const { isConnected } = useAppKitAccount();
 
   useEffect(() => {
     if (walletAuth.status === "authenticated") {
@@ -21,6 +21,14 @@ export default function AuthPage() {
 
   const isLoading =
     walletAuth.status === "checking" || walletAuth.status === "authenticating";
+
+  const handleSignIn = () => {
+    if (!isConnected) {
+      open();
+    } else if (walletAuth.status === "unauthenticated") {
+      walletAuth.authenticate();
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -32,7 +40,7 @@ export default function AuthPage() {
 
         <p className="text-sm text-gray-400 text-left">
           Connect your Solana wallet to resume your adventures. Once signed in,
-          we’ll drop you straight into your story list.
+          we'll drop you straight into your story list.
         </p>
 
         {walletAuth.error && (
@@ -41,28 +49,13 @@ export default function AuthPage() {
           </div>
         )}
 
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={() => open()}
-            className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm font-medium disabled:opacity-50"
-            disabled={isLoading}
-          >
-            {isConnected ? "Select a different wallet" : "Connect Wallet"}
-          </button>
-          <button
-            onClick={() => walletAuth.authenticate()}
-            className="w-full px-4 py-2 border border-blue-500 rounded text-sm font-medium disabled:opacity-50"
-            disabled={isLoading || !isConnected}
-          >
-            {isLoading ? "Signing in…" : "Sign In with Wallet"}
-          </button>
-        </div>
-
-        {address && (
-          <p className="text-xs text-gray-500 font-mono text-left">
-            Connected wallet: {address.slice(0, 4)}…{address.slice(-4)}
-          </p>
-        )}
+        <button
+          onClick={handleSignIn}
+          className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isLoading}
+        >
+          {isLoading ? "Signing in…" : "Sign in"}
+        </button>
       </div>
     </div>
   );

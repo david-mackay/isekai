@@ -652,10 +652,22 @@ export default function StoryChatPage() {
               New Story
             </button>
             {address && (
-              <span className="hidden md:inline text-xs text-gray-400 font-mono">
+              <button
+                onClick={() => open()}
+                className="hidden md:inline px-2 py-1 text-xs text-gray-400 font-mono hover:text-gray-300 border border-gray-700 rounded hover:border-gray-600"
+              >
                 {address.slice(0, 4)}…{address.slice(-4)}
-              </span>
+              </button>
             )}
+            <button
+              onClick={async () => {
+                await walletAuth.logout();
+                router.push("/auth");
+              }}
+              className="px-2 md:px-3 py-2 border rounded text-xs md:text-sm hover:bg-red-500/10 hover:border-red-500/50"
+            >
+              Logout
+            </button>
             <ThemeSwitcher />
           </div>
         </header>

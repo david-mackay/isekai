@@ -228,9 +228,12 @@ export default function StoriesPage() {
           </div>
           <div className="flex items-center gap-3">
             {address && (
-              <span className="hidden sm:inline text-xs text-gray-500 font-mono">
+              <button
+                onClick={() => open()}
+                className="hidden sm:inline px-2 py-1 text-xs text-gray-500 font-mono hover:text-gray-400 border border-gray-700 rounded hover:border-gray-600"
+              >
                 {address.slice(0, 4)}…{address.slice(-4)}
-              </span>
+              </button>
             )}
             <ThemeSwitcher />
             <button
@@ -238,6 +241,15 @@ export default function StoriesPage() {
               className="px-4 py-2 border rounded text-sm"
             >
               New Story
+            </button>
+            <button
+              onClick={async () => {
+                await walletAuth.logout();
+                router.push("/auth");
+              }}
+              className="px-4 py-2 border rounded text-sm hover:bg-red-500/10 hover:border-red-500/50"
+            >
+              Logout
             </button>
           </div>
         </header>
