@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { useRef, useEffect as useEffectReact } from "react";
+import { useDevSettings } from "@/contexts/DevSettingsContext";
 
-type ChatMessage = { role: "dm" | "you"; content: string };
+
+type ChatMessage = { role: "dm" | "you"; content: string; imageUrl?: string | null };
 
 type Character = {
   id: string;
@@ -11,6 +13,7 @@ type Character = {
 };
 
 export default function CharactersTab({ sessionId }: { sessionId: string }) {
+  const { imageModelId } = useDevSettings();
   const [characters, setCharacters] = useState<Character[]>([]);
   const [selected, setSelected] = useState<string>("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -61,11 +64,12 @@ export default function CharactersTab({ sessionId }: { sessionId: string }) {
           text: textToSend,
           sessionId,
           targetCharacter: selectedCharacter.name,
+          imageModelId: imageModelId,
         }),
       });
-      const data = (await res.json()) as { content?: string; error?: string };
+      const data = (await res.json()) as { content?: string; imageUrl?: string | null; error?: string };
       if (!res.ok || !data.content) throw new Error(data.error || "Failed");
-      setMessages((m) => [...m, { role: "dm", content: data.content! }]);
+      setMessages((m) => [...m, { role: "dm", content: data.content!, imageUrl: data.imageUrl ?? null }]);
       setInput("");
     } catch (e) {
       const message = e instanceof Error ? e.message : "Unknown error";
@@ -131,6 +135,14 @@ export default function CharactersTab({ sessionId }: { sessionId: string }) {
                           borderTopRightRadius: m.role === "you" ? 4 : 16,
                         }}
                       >
+                        {m.imageUrl && (
+                          <img
+                            src={m.imageUrl}
+                            alt="Message image"
+                            className="mb-2 w-full max-w-xs h-auto object-contain rounded"
+                            loading="lazy"
+                          />
+                        )}
                         {m.content}
                       </div>
                     </div>

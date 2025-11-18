@@ -20,7 +20,12 @@ const CONTEXT_WARNING_CHARS = 8000;
 const CONTEXT_CRITICAL_CHARS = 14000;
 const MAX_VISIBLE_MESSAGES = 10;
 
-type ChatMessage = { id?: string; role: "dm" | "you"; content: string };
+type ChatMessage = {
+  id?: string;
+  role: "dm" | "you";
+  content: string;
+  imageUrl?: string | null;
+};
 
 const clampMessages = (list: ChatMessage[]): ChatMessage[] =>
   list.length > MAX_VISIBLE_MESSAGES
@@ -58,7 +63,7 @@ export default function StoryChatPage() {
   const walletAuth = useWalletAuth();
   const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
-  const { modelId } = useDevSettings();
+  const { modelId, imageModelId } = useDevSettings();
 
   const [stories, setStories] = useState<StorySummary[]>([]);
   const [storyBeginnings, setStoryBeginnings] = useState<
@@ -72,6 +77,7 @@ export default function StoryChatPage() {
   const [loading, setLoading] = useState(false);
   const [auto, setAuto] = useState(false);
   const [summarizing, setSummarizing] = useState(false);
+  const [generatingImage, setGeneratingImage] = useState(false);
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -124,7 +130,7 @@ export default function StoryChatPage() {
     if (!optionsMenuOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('[data-options-menu]')) {
+      if (!target.closest("[data-options-menu]")) {
         setOptionsMenuOpen(false);
       }
     };
@@ -216,13 +222,29 @@ export default function StoryChatPage() {
         throw new Error(`Failed to load messages (${res.status})`);
       }
       const data = (await res.json()) as {
-        messages: { id: string; role: "dm" | "you"; content: string }[];
+        messages: {
+          id: string;
+          role: "dm" | "you";
+          content: string;
+          imageUrl?: string | null;
+        }[];
       };
-      const formatted = data.messages.map((msg) => ({
-        id: msg.id,
-        role: msg.role,
-        content: msg.content,
-      }));
+      const formatted = data.messages.map((msg) => {
+        if (msg.imageUrl) {
+          console.log("📥 Client: Loaded message with imageUrl", {
+            messageId: msg.id,
+            imageUrlLength: msg.imageUrl.length,
+            imageUrlPreview: msg.imageUrl.substring(0, 100),
+            imageUrlEnd: msg.imageUrl.substring(msg.imageUrl.length - 50),
+          });
+        }
+        return {
+          id: msg.id,
+          role: msg.role,
+          content: msg.content,
+          imageUrl: msg.imageUrl ?? null,
+        };
+      });
       setMessages(clampMessages(formatted));
     } catch (error) {
       console.error("Unable to load story messages", error);
@@ -326,6 +348,69 @@ export default function StoryChatPage() {
     }
   }, [storyId, modelId, loadStoryMessages, fetchStories]);
 
+  const handleGenerateImage = useCallback(async () => {
+    if (!storyId || !isDevAuthenticated) return;
+    setGeneratingImage(true);
+    try {
+      const res = await fetch("/api/dev/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: storyId,
+          imageModelId: imageModelId,
+        }),
+      });
+      const data = (await res.json()) as {
+        success?: boolean;
+        imageUrl?: string;
+        error?: string;
+      };
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to generate image");
+      }
+      if (data.imageUrl) {
+        // Append to story
+        const appendRes = await fetch("/api/dev/append-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId: storyId,
+            imageUrl: data.imageUrl,
+            content: "[DEV] Generated scene image",
+          }),
+        });
+
+        if (appendRes.ok) {
+          // Small delay to ensure database transaction is committed
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          // Reload messages to show the new image
+          await loadStoryMessages(storyId);
+        } else {
+          // Fallback: just add to local state
+          setMessages((prev) =>
+            clampMessages([
+              ...prev,
+              {
+                role: "dm",
+                content: "[DEV] Generated scene image",
+                imageUrl: data.imageUrl!,
+              },
+            ])
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Failed to generate image", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to generate image. Check console for details."
+      );
+    } finally {
+      setGeneratingImage(false);
+    }
+  }, [storyId, isDevAuthenticated, imageModelId]);
+
   const send = useCallback(
     async (kind: "do" | "say" | "continue", overrideText?: string) => {
       if (!storyId) return;
@@ -356,17 +441,26 @@ export default function StoryChatPage() {
             text: textToSend,
             sessionId: storyId,
             model: modelId,
+            imageModelId: imageModelId,
           }),
         });
         const data = (await res.json()) as {
           content?: string;
+          imageUrl?: string | null;
           error?: string;
         };
         if (!res.ok || !data.content) {
           throw new Error(data.error || "Request failed");
         }
         setMessages((prev) =>
-          clampMessages([...prev, { role: "dm", content: data.content! }])
+          clampMessages([
+            ...prev,
+            {
+              role: "dm",
+              content: data.content!,
+              imageUrl: data.imageUrl ?? null,
+            },
+          ])
         );
         setInput("");
         setStories((prev) =>
@@ -541,6 +635,16 @@ export default function StoryChatPage() {
             >
               {summarizing ? "Summarizing..." : "Summarize Now"}
             </button>
+            {isDevAuthenticated && (
+              <button
+                onClick={handleGenerateImage}
+                disabled={generatingImage}
+                className="px-2 md:px-3 py-2 border rounded text-xs md:text-sm bg-purple-500/20 border-purple-500/50"
+                title="Generate image of current scene (Dev only)"
+              >
+                {generatingImage ? "Generating..." : "🎨 Generate Image"}
+              </button>
+            )}
             <button
               onClick={handleNewStory}
               className="px-2 md:px-3 py-2 border rounded text-xs md:text-sm"
@@ -578,7 +682,9 @@ export default function StoryChatPage() {
                 </button>
                 <button
                   className={`px-3 py-2 text-sm rounded border ${
-                    activeTab === "characters" ? "bg-white/10" : "bg-transparent"
+                    activeTab === "characters"
+                      ? "bg-white/10"
+                      : "bg-transparent"
                   }`}
                   onClick={() => setActiveTab("characters")}
                 >
@@ -621,7 +727,9 @@ export default function StoryChatPage() {
                 </button>
                 <button
                   className={`w-full px-3 py-2 text-sm rounded border ${
-                    activeTab === "characters" ? "bg-white/10" : "bg-transparent"
+                    activeTab === "characters"
+                      ? "bg-white/10"
+                      : "bg-transparent"
                   }`}
                   onClick={() => {
                     setActiveTab("characters");
@@ -638,11 +746,15 @@ export default function StoryChatPage() {
         <main className="flex-1 p-2 md:p-6 flex flex-col">
           {activeTab === "chat" ? (
             <>
-              <div className={`grid grid-cols-1 ${isMobile ? "" : "lg:grid-cols-4"} gap-4 flex-1`}>
+              <div
+                className={`grid grid-cols-1 ${
+                  isMobile ? "" : "lg:grid-cols-4"
+                } gap-4 flex-1`}
+              >
                 <div
-                  className={`${
-                    isMobile ? "order-1" : "order-2 lg:order-1"
-                  } ${isMobile ? "" : "lg:col-span-3"} w-full`}
+                  className={`${isMobile ? "order-1" : "order-2 lg:order-1"} ${
+                    isMobile ? "" : "lg:col-span-3"
+                  } w-full`}
                 >
                   <ChatWindow
                     messages={messages}
@@ -651,9 +763,7 @@ export default function StoryChatPage() {
                   />
                 </div>
                 {!isMobile && (
-                  <div
-                    className="order-1 lg:order-2 lg:col-span-1 w-full"
-                  >
+                  <div className="order-1 lg:order-2 lg:col-span-1 w-full">
                     <CharacterSheet sessionId={storyId} />
                   </div>
                 )}

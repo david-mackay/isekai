@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
       sessionId?: string;
       targetCharacter?: string;
       model?: string;
+      imageModelId?: string;
     };
     console.log("🎮 API: Received DM request:", body);
 
@@ -54,11 +55,12 @@ export async function POST(req: NextRequest) {
       action,
       body.sessionId,
       body.targetCharacter,
-      body.model
+      body.model,
+      body.imageModelId
     );
     console.log("✅ API: Turn completed successfully");
 
-    return NextResponse.json({ content: result });
+    return NextResponse.json({ content: result.text, imageUrl: result.imageUrl ?? null });
   } catch (e: unknown) {
     console.error("❌ API: Error running turn:", e);
     const message = e instanceof Error ? e.message : "Unknown error";

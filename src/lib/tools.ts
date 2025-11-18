@@ -18,6 +18,9 @@ import {
   RelationshipUpdateSchema,
   applyStorySummary,
 } from "./storySummary";
+import { generateImage } from "./imageGeneration";
+import { uploadImageToSupabase } from "./supabaseStorage";
+import { v4 as uuidv4 } from "uuid";
 
 export const rollDice = tool(
   async ({ formula }: { formula: string }) => {
@@ -540,6 +543,351 @@ export const updatePlayerBackstory = tool(
   }
 );
 
+export const generateAndUploadImageTool = tool(
+  async (payload: {
+    prompt: string;
+    imageModelId?: string | null;
+    sessionId?: string | null;
+  }) => {
+    const toolStartTime = Date.now();
+    console.log("🎨 Generate Image Tool: Starting", {
+      sessionId: payload.sessionId,
+      imageModelId: payload.imageModelId,
+      promptLength: payload.prompt.length,
+    });
+
+    try {
+      // Generate the image
+      const imageBuffer = await generateImage(
+        payload.prompt,
+        payload.imageModelId ?? undefined
+      );
+
+      // Create a unique key for the image
+      const imageKey = `generated/${
+        payload.sessionId || "default"
+      }/${uuidv4()}`;
+      console.log("🎨 Generate Image Tool: Generated image, uploading...", {
+        imageKey,
+        imageSize: imageBuffer.length,
+      });
+
+      // Upload to Supabase
+      const imageUrl = await uploadImageToSupabase(imageBuffer, imageKey);
+
+      const totalTime = Date.now() - toolStartTime;
+      console.log(
+        `🎨 Generate Image Tool: Successfully completed in ${totalTime}ms`,
+        {
+          imageUrl: imageUrl.substring(0, 100) + "...",
+        }
+      );
+
+      return JSON.stringify({
+        success: true,
+        imageUrl,
+        message: "Image generated and uploaded successfully",
+      });
+    } catch (error) {
+      const totalTime = Date.now() - toolStartTime;
+      const message =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      console.error(`🎨 Generate Image Tool: Failed after ${totalTime}ms`, {
+        error: message,
+        sessionId: payload.sessionId,
+      });
+      return JSON.stringify({
+        success: false,
+        error: message,
+      });
+    }
+  },
+  {
+    name: "generate_and_upload_image",
+    description:
+      "Generate an image using AI and upload it to storage. Use this proactively when images will enhance the storytelling experience. Generate images for: new scenes and locations, character introductions, conflicts and combat moments, dramatic or emotional beats, significant actions or discoveries, environmental transitions, tense confrontations, action sequences, and any moment where a visual would help the player feel more immersed. Don't be conservative—if a moment is visually interesting, dramatic, or would benefit from visual representation, generate an image. Returns the URL of the uploaded image which should be included in the story message.",
+    schema: z.object({
+      prompt: z
+        .string()
+        .min(1)
+        .describe(
+          "Detailed prompt describing the image to generate. Include scene details, character descriptions, mood, and style."
+        ),
+      // imageModelId and sessionId are injected by the agent; the model should not provide these.
+      imageModelId: z.string().optional().nullable(),
+      sessionId: z.string().optional().nullable(),
+    }),
+  }
+);
+
+export const getCharacterReferenceImageTool = tool(
+  async (payload: {
+    characterId?: string | null;
+    characterName?: string | null;
+    sessionId?: string | null;
+  }) => {
+    if (!payload.sessionId) {
+      throw new Error("sessionId is required");
+    }
+    const sessionId = payload.sessionId;
+    const characterId = await resolveCardId(sessionId, {
+      id: payload.characterId,
+      name: payload.characterName,
+      type: "character",
+    });
+
+    if (!characterId) {
+      return JSON.stringify({
+        success: false,
+        error: `Character not found: ${
+          payload.characterName ?? payload.characterId ?? "unknown"
+        }`,
+      });
+    }
+
+    const cards = await listCards({ type: "character" }, sessionId);
+    const characterCard = cards.find((c) => c.id === characterId);
+
+    if (!characterCard) {
+      return JSON.stringify({
+        success: false,
+        error: "Character card not found",
+      });
+    }
+
+    const data = (characterCard.data ?? {}) as Record<string, unknown>;
+    const referenceImageUrl =
+      typeof data.referenceImageUrl === "string"
+        ? data.referenceImageUrl
+        : null;
+
+    return JSON.stringify({
+      success: true,
+      characterId,
+      characterName: characterCard.name,
+      referenceImageUrl,
+      hasReferenceImage: referenceImageUrl !== null,
+    });
+  },
+  {
+    name: "get_character_reference_image",
+    description:
+      "Retrieve the stored reference image URL for a character. Use this when generating images of characters to maintain visual consistency.",
+    schema: z.object({
+      characterId: z.string().optional().nullable(),
+      characterName: z.string().optional().nullable(),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
+    }),
+  }
+);
+
+export const setCharacterReferenceImageTool = tool(
+  async (payload: {
+    characterId?: string | null;
+    characterName?: string | null;
+    imageUrl: string;
+    sessionId?: string | null;
+  }) => {
+    if (!payload.sessionId) {
+      throw new Error("sessionId is required");
+    }
+    const sessionId = payload.sessionId;
+    const characterId = await resolveCardId(sessionId, {
+      id: payload.characterId,
+      name: payload.characterName,
+      type: "character",
+    });
+
+    if (!characterId) {
+      throw new Error(
+        `Character not found: ${
+          payload.characterName ?? payload.characterId ?? "unknown"
+        }`
+      );
+    }
+
+    const cards = await listCards({ type: "character" }, sessionId);
+    const characterCard = cards.find((c) => c.id === characterId);
+
+    if (!characterCard) {
+      throw new Error("Character card not found");
+    }
+
+    const currentData = (characterCard.data ?? {}) as Record<string, unknown>;
+    const updatedData = {
+      ...currentData,
+      referenceImageUrl: payload.imageUrl,
+    };
+
+    await upsertCard(
+      {
+        ...characterCard,
+        data: updatedData,
+      },
+      sessionId
+    );
+
+    invalidateVectorCache(sessionId);
+    return JSON.stringify({
+      success: true,
+      characterId,
+      characterName: characterCard.name,
+      referenceImageUrl: payload.imageUrl,
+      message: "Reference image stored successfully",
+    });
+  },
+  {
+    name: "set_character_reference_image",
+    description:
+      "Store a reference image URL for a character. Use this the first time an image is generated for a character to maintain visual consistency in future generations.",
+    schema: z.object({
+      characterId: z.string().optional().nullable(),
+      characterName: z.string().optional().nullable(),
+      imageUrl: z
+        .string()
+        .url()
+        .describe("URL of the reference image to store"),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
+    }),
+  }
+);
+
+export const getLocationReferenceImageTool = tool(
+  async (payload: {
+    locationId?: string | null;
+    locationName?: string | null;
+    sessionId?: string | null;
+  }) => {
+    if (!payload.sessionId) {
+      throw new Error("sessionId is required");
+    }
+    const sessionId = payload.sessionId;
+    const locationId = await resolveCardId(sessionId, {
+      id: payload.locationId,
+      name: payload.locationName,
+      type: "environment",
+    });
+
+    if (!locationId) {
+      return JSON.stringify({
+        success: false,
+        error: `Location not found: ${
+          payload.locationName ?? payload.locationId ?? "unknown"
+        }`,
+      });
+    }
+
+    const cards = await listCards({ type: "environment" }, sessionId);
+    const locationCard = cards.find((c) => c.id === locationId);
+
+    if (!locationCard) {
+      return JSON.stringify({
+        success: false,
+        error: "Location card not found",
+      });
+    }
+
+    const data = (locationCard.data ?? {}) as Record<string, unknown>;
+    const referenceImageUrl =
+      typeof data.referenceImageUrl === "string"
+        ? data.referenceImageUrl
+        : null;
+
+    return JSON.stringify({
+      success: true,
+      locationId,
+      locationName: locationCard.name,
+      referenceImageUrl,
+      hasReferenceImage: referenceImageUrl !== null,
+    });
+  },
+  {
+    name: "get_location_reference_image",
+    description:
+      "Retrieve the stored reference image URL for a location. Use this when generating images of locations to maintain visual consistency.",
+    schema: z.object({
+      locationId: z.string().optional().nullable(),
+      locationName: z.string().optional().nullable(),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
+    }),
+  }
+);
+
+export const setLocationReferenceImageTool = tool(
+  async (payload: {
+    locationId?: string | null;
+    locationName?: string | null;
+    imageUrl: string;
+    sessionId?: string | null;
+  }) => {
+    if (!payload.sessionId) {
+      throw new Error("sessionId is required");
+    }
+    const sessionId = payload.sessionId;
+    const locationId = await resolveCardId(sessionId, {
+      id: payload.locationId,
+      name: payload.locationName,
+      type: "environment",
+    });
+
+    if (!locationId) {
+      throw new Error(
+        `Location not found: ${
+          payload.locationName ?? payload.locationId ?? "unknown"
+        }`
+      );
+    }
+
+    const cards = await listCards({ type: "environment" }, sessionId);
+    const locationCard = cards.find((c) => c.id === locationId);
+
+    if (!locationCard) {
+      throw new Error("Location card not found");
+    }
+
+    const currentData = (locationCard.data ?? {}) as Record<string, unknown>;
+    const updatedData = {
+      ...currentData,
+      referenceImageUrl: payload.imageUrl,
+    };
+
+    await upsertCard(
+      {
+        ...locationCard,
+        data: updatedData,
+      },
+      sessionId
+    );
+
+    invalidateVectorCache(sessionId);
+    return JSON.stringify({
+      success: true,
+      locationId,
+      locationName: locationCard.name,
+      referenceImageUrl: payload.imageUrl,
+      message: "Reference image stored successfully",
+    });
+  },
+  {
+    name: "set_location_reference_image",
+    description:
+      "Store a reference image URL for a location. Use this the first time an image is generated for a location to maintain visual consistency in future generations.",
+    schema: z.object({
+      locationId: z.string().optional().nullable(),
+      locationName: z.string().optional().nullable(),
+      imageUrl: z
+        .string()
+        .url()
+        .describe("URL of the reference image to store"),
+      // Injected by the agent; the model should not fabricate this.
+      sessionId: z.string().optional().nullable(),
+    }),
+  }
+);
+
 export const tools = [
   rollDice,
   updateOrCreateCard,
@@ -549,4 +897,9 @@ export const tools = [
   updateRelationshipTool,
   summarizeStoryTool,
   updatePlayerBackstory,
+  generateAndUploadImageTool,
+  getCharacterReferenceImageTool,
+  setCharacterReferenceImageTool,
+  getLocationReferenceImageTool,
+  setLocationReferenceImageTool,
 ];

@@ -11,9 +11,9 @@ export const MODEL_OPTIONS: ModelOption[] = [
     description: "DeepSeek's latest model (RolePlay #1)",
   },
   {
-    id: "mistralai/mistral-nemo:free",
-    label: "Mistral Nemo Free",
-    description: "Mistral's free model (RolePlay #3)",
+    id: "google/gemini-2.5-pro",
+    label: "Gemini 2.5 Pro",
+    description: "Google's Gemini 2.5 Pro (Premium)",
   },
   {
     id: "mistralai/mistral-nemo",
@@ -21,14 +21,14 @@ export const MODEL_OPTIONS: ModelOption[] = [
     description: "Roleplay Cheapest Model",
   },
   {
-    id: "anthropic/claude-3.5-sonnet",
-    label: "Claude 3.5 Sonnet",
-    description: "Anthropic's balanced reasoning model",
+    id: "google/gemini-2.5-flash",
+    label: "Gemini 2.5 Flash",
+    description: "Google's Gemini 2.5 Flash (Moderate)",
   },
   {
-    id: "google/gemini-2.0-pro-exp",
-    label: "Gemini 2.0 Pro",
-    description: "Google's experimental Gemini 2.0 Pro",
+    id: "openrouter/sherlock-think-alpha",
+    label: "Sherlock Think Alpha",
+    description: "OpenRouter's Sherlock Think Alpha (Free)",
   },
   {
     id: "x-ai/grok-4-fast",
@@ -37,11 +37,33 @@ export const MODEL_OPTIONS: ModelOption[] = [
   },
 ];
 
-export const DEFAULT_MODEL_ID = "x-ai/grok-4-fast";
+export const DEFAULT_MODEL_ID = "openrouter/sherlock-think-alpha";
+
+export const IMAGE_MODEL_OPTIONS: ModelOption[] = [
+  {
+    id: "openai/gpt-5-image-mini",
+    label: "GPT-5 Image Mini",
+    description: "OpenAI's GPT-5 Image Mini (Default)",
+  },
+  {
+    id: "google/gemini-2.5-flash-image",
+    label: "Gemini 2.5 Flash Image",
+    description: "Google's Gemini 2.5 Flash Image (Default)",
+  },
+];
+
+export const DEFAULT_IMAGE_MODEL_ID = "google/gemini-2.5-flash-image";
 
 export function resolveModelId(candidate?: string): string {
   if (!candidate) return DEFAULT_MODEL_ID;
   return MODEL_OPTIONS.some((option) => option.id === candidate)
     ? candidate
     : DEFAULT_MODEL_ID;
+}
+
+export function resolveImageModelId(candidate?: string): string {
+  if (!candidate) return DEFAULT_IMAGE_MODEL_ID;
+  return IMAGE_MODEL_OPTIONS.some((option) => option.id === candidate)
+    ? candidate
+    : DEFAULT_IMAGE_MODEL_ID;
 }

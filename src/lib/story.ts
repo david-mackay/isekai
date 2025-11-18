@@ -14,10 +14,11 @@ function requireStoryId(sessionId?: string) {
 export async function appendToStory(
   text: string,
   sessionId?: string,
-  role: "dm" | "you" = "dm"
+  role: "dm" | "you" = "dm",
+  imageUrl?: string | null
 ) {
   const storyId = requireStoryId(sessionId);
-  return addStoryMessage(storyId, role, text);
+  return addStoryMessage(storyId, role, text, imageUrl);
 }
 
 export async function readStory(sessionId?: string): Promise<string> {

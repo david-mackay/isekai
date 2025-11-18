@@ -85,6 +85,7 @@ export const storyMessages = pgTable(
       .references(() => stories.id, { onDelete: "cascade" }),
     role: storyRoleEnum("role").notNull(),
     content: text("content").notNull(),
+    imageUrl: text("image_url"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     sequence: integer("sequence").notNull(),
   },

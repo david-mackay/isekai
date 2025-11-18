@@ -1,0 +1,1 @@
+ALTER TABLE "story_messages" ADD COLUMN "image_url" text;

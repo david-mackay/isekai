@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useDevSettings } from "@/contexts/DevSettingsContext";
-import { MODEL_OPTIONS } from "@/lib/modelOptions";
+import { MODEL_OPTIONS, IMAGE_MODEL_OPTIONS } from "@/lib/modelOptions";
 
 const AUTH_STORAGE_KEY = "isekai:devAuth";
 
 export default function DevSettings() {
-  const { modelId, setModelId } = useDevSettings();
+  const { modelId, setModelId, imageModelId, setImageModelId } = useDevSettings();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -132,6 +132,23 @@ export default function DevSettings() {
             onChange={(event) => setModelId(event.target.value)}
           >
             {MODEL_OPTIONS.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <label className="text-xs uppercase tracking-[0.08em]">Image Model</label>
+          <select
+            className="min-w-[200px] rounded border px-3 py-2 text-sm focus:outline-none"
+            style={{
+              backgroundColor: "var(--color-surface)",
+              borderColor: "var(--color-border)",
+              color: "var(--color-text)",
+            }}
+            value={imageModelId}
+            onChange={(event) => setImageModelId(event.target.value)}
+          >
+            {IMAGE_MODEL_OPTIONS.map((option) => (
               <option key={option.id} value={option.id}>
                 {option.label}
               </option>

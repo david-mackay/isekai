@@ -21,7 +21,7 @@ export default function NewStoryPage() {
   const walletAuth = useWalletAuth();
   const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
-  const { modelId } = useDevSettings();
+  const { modelId, imageModelId } = useDevSettings();
 
   const [stories, setStories] = useState<StorySummary[]>([]);
   const [storyBeginnings, setStoryBeginnings] = useState<
@@ -206,6 +206,7 @@ export default function NewStoryPage() {
             kind: "continue",
             sessionId: story.id,
             model: modelId,
+            imageModelId: imageModelId,
           }),
         });
         const dmData = (await dmRes.json()) as {

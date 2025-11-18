@@ -3,7 +3,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import LoadingDots from "./LoadingDots";
 
-type ChatMessage = { role: "dm" | "you"; content: string };
+type ChatMessage = {
+  id?: string;
+  role: "dm" | "you";
+  content: string;
+  imageUrl?: string | null;
+};
 
 export default function ChatWindow({
   messages,
@@ -58,7 +63,12 @@ export default function ChatWindow({
   const rendered = useMemo(() => {
     if (!shouldAnimate) return messages;
     const clone = messages.slice(0, -1);
-    clone.push({ role: "dm", content: animatedText });
+    const lastMessage = messages[messages.length - 1];
+    clone.push({
+      role: "dm",
+      content: animatedText,
+      imageUrl: lastMessage?.imageUrl,
+    });
     return clone;
   }, [messages, shouldAnimate, animatedText]);
 
@@ -112,7 +122,7 @@ export default function ChatWindow({
               : "text-slate-400";
 
             return (
-              <div key={i} className={containerClass}>
+              <div key={m.id || `msg-${i}`} className={containerClass}>
                 <div className={bubbleClass}>
                   <div className="flex items-baseline gap-2 mb-1">
                     <span
@@ -121,6 +131,14 @@ export default function ChatWindow({
                       {label}
                     </span>
                   </div>
+                  {m.imageUrl && (
+                    <img
+                      src={m.imageUrl}
+                      alt="Story scene"
+                      className="mb-2 w-full max-w-md h-auto object-contain rounded-lg"
+                      loading="lazy"
+                    />
+                  )}
                   <div className="prose prose-invert prose-sm max-w-none">
                     <ReactMarkdown
                       components={{

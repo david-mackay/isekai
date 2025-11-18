@@ -15,6 +15,13 @@
       "when": 1762468005816,
       "tag": "20251106222645_lucky_magneto",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763423698927,
+      "tag": "20251117235458_magical_hammerhead",
+      "breakpoints": true
     }
   ]
 }

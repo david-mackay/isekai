@@ -28,6 +28,7 @@ const systemPreamble = `You are an expert Dungeon Master for an isekai-flavored,
   - Keep character sheets truthful: use upsert_character_stat to capture numeric or structured changes, and update_relationship to log shifts in trust, loyalty, rivalry, or alliances.
   - When recording memories or updating relationships, you MUST use character IDs from the Character ID Dictionary provided in your context. The dictionary maps character names (and aliases) to their UUIDs. Always use the ID field from the dictionary rather than relying on name resolution. This ensures accurate linking and prevents errors.
   - When the running transcript grows unwieldy, call summarize_story_context to condense recent events, queue durable memories, and ensure critical character data stays current.
+  - Use generate_and_upload_image proactively when images will enhance the storytelling experience. Generate images for: new scenes and locations, character introductions, conflicts and combat moments, dramatic or emotional beats, significant actions or discoveries, environmental transitions, and any moment where a visual would help the player feel more immersed. After generating an image, include it in your narrative response. The first time you generate an image for a character or location, use set_character_reference_image or set_location_reference_image to store it for future consistency. When generating subsequent images of the same character or location, use get_character_reference_image or get_location_reference_image to retrieve the reference image URL and mention it in your prompt to maintain visual consistency.
   - Keep a consistent universe; consult retrieved cards for continuity (world, races, characters, locations, factions, items, quests).
   - After user 'do' actions, call roll_dice for uncertainty (e.g., stealth, persuasion, attack) and apply outcomes.
   - IMPORTANT: Let NPCs be self-driven and expressive. They should volunteer details about themselves, their goals, current pressures, and worldview. Prefer showing character through actions, opinions, and anecdotes over asking the player questions.
@@ -35,7 +36,7 @@ const systemPreamble = `You are an expert Dungeon Master for an isekai-flavored,
   - When you present system-style notifications (titles, blessings, quest updates, status changes), format them as brief lines starting with "【SYSTEM】" or "[SYSTEM]" so they read as in-world overlays (for example: "【SYSTEM】 Title Acquired: Witch of the Shoals").
   - Backstory development should be player-led and action-led. Offer soft openings rather than interrogations. At most one brief question every few turns, and only when contextually warranted; otherwise, have NPCs react, reveal, or do something.
   - When gauging NPC actions consider their personality, relationships and motivations.
-  - When fiction points toward conflict, allow combat or hostility to start naturally. Use initiative/contested checks via roll_dice and resolve with clear outcomes. Violence should have weight and consequences.
+  - When fiction points toward conflict, allow combat or hostility to start naturally. Use initiative/contested checks via roll_dice and resolve with clear outcomes. Violence should have weight and consequences. During conflicts, combat, or tense confrontations, strongly consider generating an image to capture the dramatic moment visually.
   - Track character relationships and development: update character cards with new experiences, relationship changes, and discovered traits as they emerge through play.
   - Create moments where the player's backstory can be revealed through their actions and choices rather than exposition.
   - When the player demonstrates a skill, reveals knowledge, or acts in a way that suggests their background, use update_player_backstory to record these revelations.
@@ -93,8 +94,9 @@ export async function runTurn(
   action: UserAction,
   sessionId?: string,
   targetCharacter?: string,
-  modelId?: string
-): Promise<string> {
+  modelId?: string,
+  imageModelId?: string
+): Promise<{ text: string; imageUrl?: string | null }> {
   if (!sessionId) {
     throw new Error("Story ID is required");
   }
@@ -241,7 +243,7 @@ export async function runTurn(
       }\nSeed JSON: ${JSON.stringify(beginningCard.data?.seed ?? {}, null, 0)}`
     : "";
 
-  // Create tools bound with sessionId from context - AI never sees sessionId
+  // Create tools bound with sessionId and imageModelId from context - AI never sees these
   const toolsWithSessionId = tools.map((t) => {
     const toolName = (t as unknown as { name?: string }).name;
     const toolsRequiringSessionId = [
@@ -252,7 +254,12 @@ export async function runTurn(
       "upsert_character_stat",
       "update_relationship",
       "summarize_story_context",
+      "get_character_reference_image",
+      "set_character_reference_image",
+      "get_location_reference_image",
+      "set_location_reference_image",
     ];
+    const toolsRequiringImageModelId = ["generate_and_upload_image"];
 
     if (toolsRequiringSessionId.includes(toolName || "")) {
       // Wrap the tool to inject sessionId before invocation
@@ -270,6 +277,26 @@ export async function runTurn(
         },
       };
     }
+
+    if (toolsRequiringImageModelId.includes(toolName || "")) {
+      // Wrap the tool to inject imageModelId (and sessionId) before invocation
+      const originalInvoke = (
+        t as unknown as { invoke: (a: unknown) => Promise<unknown> }
+      ).invoke.bind(t);
+      return {
+        ...t,
+        invoke: async (args: unknown) => {
+          const argsWithInjected = {
+            ...(args as Record<string, unknown>),
+            sessionId,
+            // Override any imageModelId the AI might have tried to pass
+            imageModelId: imageModelId || undefined,
+          };
+          return originalInvoke(argsWithInjected);
+        },
+      };
+    }
+
     return t;
   });
 
@@ -281,12 +308,16 @@ export async function runTurn(
           initialBackstorySummary || initialBackstory
         }`
       : "";
+  const firstMessageNote =
+    storyIsEmpty && !targetCharacter
+      ? `\n\n⚠️ IMPORTANT: This is the FIRST MESSAGE of the story. You MUST call generate_and_upload_image to create an opening scene image that sets the visual tone and introduces the starting location/environment. This image is essential for player immersion.`
+      : "";
   const messages: BaseMessage[] = [
     new SystemMessage(systemPreamble),
     new SystemMessage(
       `GM Settings: ${JSON.stringify(
         settings
-      )}${beginningSeed}${backstoryNote}\n\nStory so far (append-only log):\n${storySoFar.slice(
+      )}${beginningSeed}${backstoryNote}${firstMessageNote}\n\nStory so far (append-only log):\n${storySoFar.slice(
         -8000
       )}\n\nRelevant world notes from cards via RAG:\n${ragSummary}${characterIdReference}${
         targetCharacter
@@ -318,6 +349,7 @@ export async function runTurn(
     return Array.isArray(tc) ? tc : [];
   }
   let toolCalls = getToolCalls(ai);
+  let generatedImageUrl: string | null = null;
   while (turns < maxTurns && toolCalls.length > 0) {
     const toolOutputs: ToolMessage[] = [];
     for (const call of toolCalls) {
@@ -330,9 +362,34 @@ export async function runTurn(
       const result = await (
         tool as unknown as { invoke: (a: unknown) => Promise<unknown> }
       ).invoke(args);
+      const resultStr = String(result);
       toolOutputs.push(
-        new ToolMessage({ content: String(result), tool_call_id: call.id })
+        new ToolMessage({ content: resultStr, tool_call_id: call.id })
       );
+
+      // Extract image URL from generate_and_upload_image tool result
+      if (call.name === "generate_and_upload_image") {
+        try {
+          const parsed = JSON.parse(resultStr);
+          if (parsed.success && parsed.imageUrl) {
+            generatedImageUrl = parsed.imageUrl;
+            console.log(
+              "🎨 Agent: Image generated and will be attached to message",
+              {
+                imageUrl: parsed.imageUrl.substring(0, 100) + "...",
+                sessionId: storyId,
+              }
+            );
+          } else if (parsed.error) {
+            console.error("🎨 Agent: Image generation failed", {
+              error: parsed.error,
+              sessionId: storyId,
+            });
+          }
+        } catch {
+          // Not JSON, ignore
+        }
+      }
     }
     messages.push(ai as unknown as BaseMessage, ...toolOutputs);
     ai = await toolModel.invoke(
@@ -350,7 +407,14 @@ export async function runTurn(
     } else if (action.kind === "do") {
       await appendToStory(`You do: ${action.text}`, storyId, "you");
     }
-    await appendToStory(text, storyId, "dm");
+    await appendToStory(text, storyId, "dm", generatedImageUrl);
+    if (generatedImageUrl) {
+      console.log("🎨 Agent: Message appended with image", {
+        sessionId: storyId,
+        hasImage: true,
+        imageUrl: generatedImageUrl.substring(0, 100) + "...",
+      });
+    }
   }
-  return text;
+  return { text, imageUrl: generatedImageUrl };
 }

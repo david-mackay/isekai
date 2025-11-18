@@ -21,6 +21,7 @@ export type StoryMessageDTO = {
   id: string;
   role: "dm" | "you";
   content: string;
+  imageUrl: string | null;
   sequence: number;
   createdAt: string;
 };
@@ -123,7 +124,8 @@ export async function updateStoryActivity(storyId: string, messageDelta = 1) {
 export async function addStoryMessage(
   storyId: string,
   role: "dm" | "you",
-  content: string
+  content: string,
+  imageUrl?: string | null
 ): Promise<StoryMessageDTO> {
   return db.transaction(async (tx) => {
     const [nextSeqRow] = await tx
@@ -141,6 +143,7 @@ export async function addStoryMessage(
         storyId,
         role,
         content,
+        imageUrl: imageUrl ?? null,
         sequence,
       })
       .returning();
@@ -158,6 +161,7 @@ export async function addStoryMessage(
       id: message.id,
       role: message.role,
       content: message.content,
+      imageUrl: message.imageUrl,
       sequence: message.sequence,
       createdAt: message.createdAt.toISOString(),
     };
@@ -186,6 +190,7 @@ export async function getStoryMessages(
         id: row.id,
         role: row.role,
         content: row.content,
+        imageUrl: row.imageUrl,
         sequence: row.sequence,
         createdAt: row.createdAt.toISOString(),
       }));
@@ -201,6 +206,7 @@ export async function getStoryMessages(
     id: row.id,
     role: row.role,
     content: row.content,
+    imageUrl: row.imageUrl,
     sequence: row.sequence,
     createdAt: row.createdAt.toISOString(),
   }));

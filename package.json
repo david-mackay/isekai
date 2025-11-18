@@ -12,6 +12,7 @@
     "jobs:consolidate": "tsx scripts/consolidateCharacters.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.933.0",
     "@langchain/community": "^0.3.54",
     "@langchain/core": "^0.3.73",
     "@langchain/langgraph": "^0.4.9",
@@ -24,12 +25,14 @@
     "drizzle-orm": "^0.44.7",
     "jsonwebtoken": "^9.0.2",
     "next": "15.5.2",
+    "openai": "^6.9.1",
     "p-queue": "^8.0.1",
     "pg": "^8.16.3",
     "pgvector": "^0.2.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-markdown": "^10.1.0",
+    "sharp": "^0.34.5",
     "tweetnacl": "^1.0.3",
     "uuid": "^11.1.0",
     "zod": "^3.25.76"
