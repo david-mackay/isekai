@@ -23,7 +23,7 @@ import {
 
 const embeddingsClient = new OpenAIEmbeddings({
   apiKey: getOpenRouterApiKey(),
-  model: "qwen/qwen3-embedding-0.6b",
+  model: "baai/bge-m3",
   configuration: getOpenRouterConfiguration(),
 });
 
