@@ -444,11 +444,41 @@ export default function StoryChatPage() {
             imageModelId: imageModelId,
           }),
         });
-        const data = (await res.json()) as {
+
+        // Check if response has content before parsing JSON
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await res.text();
+          throw new Error(
+            res.ok
+              ? `Unexpected response format: ${text.slice(0, 100)}`
+              : `Request failed with status ${res.status}: ${text.slice(
+                  0,
+                  100
+                )}`
+          );
+        }
+
+        const text = await res.text();
+        if (!text) {
+          throw new Error(
+            res.ok
+              ? "Empty response from server"
+              : `Request failed with status ${res.status}`
+          );
+        }
+
+        let data: {
           content?: string;
           imageUrl?: string | null;
           error?: string;
         };
+        try {
+          data = JSON.parse(text);
+        } catch (parseError) {
+          throw new Error(`Invalid JSON response: ${text.slice(0, 100)}`);
+        }
+
         if (!res.ok || !data.content) {
           throw new Error(data.error || "Request failed");
         }

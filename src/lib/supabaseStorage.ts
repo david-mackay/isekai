@@ -1,5 +1,4 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import sharp from "sharp";
 
 function getSupabaseS3Config() {
   const endpoint = process.env.SUPABASE_BUCKET_ENDPOINT;
@@ -28,13 +27,9 @@ export async function uploadImageToSupabase(
   const { endpoint, accessKeyId, secretAccessKey, region } =
     getSupabaseS3Config();
 
-  // Convert image to webp format
-  const conversionStartTime = Date.now();
-  const webpBuffer = await sharp(imageData).webp({ quality: 85 }).toBuffer();
-  const conversionTime = Date.now() - conversionStartTime;
-  console.log(`📤 Image Upload: Converted to WebP (${(webpBuffer.length / 1024).toFixed(2)}KB) in ${conversionTime}ms`, {
-    compressionRatio: ((1 - webpBuffer.length / imageData.length) * 100).toFixed(1) + "%",
-  });
+  // Upload image as-is (PNG format from image generation API)
+  const imageBuffer = Buffer.from(imageData);
+  console.log(`📤 Image Upload: Preparing image (${(imageBuffer.length / 1024).toFixed(2)}KB) for upload`);
 
   const client = new S3Client({
     forcePathStyle: true,
@@ -51,22 +46,22 @@ export async function uploadImageToSupabase(
   // We need the bucket name - it should be in env or we can extract from endpoint
   const bucket = process.env.SUPABASE_BUCKET_NAME || "images";
 
-  // Ensure key ends with .webp
-  const webpKey = key.endsWith(".webp") ? key : `${key}.webp`;
+  // Ensure key ends with .png (images from generation API are PNG format)
+  const fileKey = key.endsWith(".png") ? key : `${key}.png`;
 
   const uploadStartTime = Date.now();
   await client.send(
     new PutObjectCommand({
       Bucket: bucket,
-      Key: webpKey,
-      Body: webpBuffer,
-      ContentType: "image/webp",
+      Key: fileKey,
+      Body: imageBuffer,
+      ContentType: "image/png",
     })
   );
   const uploadTime = Date.now() - uploadStartTime;
   console.log(`📤 Image Upload: Uploaded to Supabase in ${uploadTime}ms`, {
     bucket,
-    key: webpKey,
+    key: fileKey,
   });
 
   // Construct the public URL
@@ -78,11 +73,11 @@ export async function uploadImageToSupabase(
     throw new Error(`Invalid Supabase endpoint format: ${endpoint}`);
   }
   const projectRef = endpointMatch[1];
-  const publicUrl = `https://${projectRef}.supabase.co/storage/v1/object/public/${bucket}/${webpKey}`;
+  const publicUrl = `https://${projectRef}.supabase.co/storage/v1/object/public/${bucket}/${fileKey}`;
 
   console.log("📤 Image Upload: Upload complete", {
     publicUrl: publicUrl.substring(0, 100) + "...",
-    totalTime: conversionTime + uploadTime + "ms",
+    totalTime: uploadTime + "ms",
   });
 
   return publicUrl;

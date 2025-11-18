@@ -209,10 +209,40 @@ export default function NewStoryPage() {
             imageModelId: imageModelId,
           }),
         });
-        const dmData = (await dmRes.json()) as {
+        
+        // Check if response has content before parsing JSON
+        const contentType = dmRes.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await dmRes.text();
+          throw new Error(
+            dmRes.ok
+              ? `Unexpected response format: ${text.slice(0, 100)}`
+              : `Request failed with status ${dmRes.status}: ${text.slice(0, 100)}`
+          );
+        }
+        
+        const text = await dmRes.text();
+        if (!text) {
+          throw new Error(
+            dmRes.ok
+              ? "Empty response from server"
+              : `Request failed with status ${dmRes.status}`
+          );
+        }
+        
+        let dmData: {
           content?: string;
+          imageUrl?: string | null;
           error?: string;
         };
+        try {
+          dmData = JSON.parse(text);
+        } catch (parseError) {
+          throw new Error(
+            `Invalid JSON response: ${text.slice(0, 100)}`
+          );
+        }
+        
         if (!dmRes.ok || !dmData.content) {
           throw new Error(dmData.error || "Failed to generate opening scene");
         }
